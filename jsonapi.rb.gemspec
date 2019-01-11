@@ -1,0 +1,26 @@
+lib = File.expand_path("../lib", __FILE__)
+$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
+
+require 'jsonapi/version'
+
+Gem::Specification.new do |spec|
+  spec.name          = 'jsonapi.rb'
+  spec.version       = JSONAPI::VERSION
+  spec.authors       = ['Stas Suscov']
+  spec.email         = ['stas@nerd.ro']
+
+  spec.summary       = %q{So you say you need JSON:API support in your API...}
+  spec.description   = %q{This + FastJSONAPI = ♥}
+  spec.homepage      = 'https://github.com/stas/jsonapi.rb'
+  spec.license       = 'MIT'
+
+  spec.files         = Dir.chdir(File.expand_path('..', __FILE__)) do
+    `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(spec)/}) }
+  end
+  spec.require_paths = ['lib']
+
+  spec.add_development_dependency 'bundler'
+  spec.add_development_dependency 'rspec', '~> 3.0'
+  spec.add_development_dependency 'yardstick'
+  spec.add_development_dependency 'rubocop-rails_config'
+end

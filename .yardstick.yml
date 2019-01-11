@@ -1,0 +1,29 @@
+---
+path: ['lib/**/*.rb']
+threshold: 100
+rules:
+  ApiTag::Presence:
+    enabled: false
+  ApiTag::Inclusion:
+    enabled: false
+  ApiTag::ProtectedMethod:
+    enabled: false
+  ApiTag::PrivateMethod:
+    enabled: false
+  ExampleTag:
+    enabled: false
+  ReturnTag:
+    enabled: true
+    exclude: []
+  Summary::Presence:
+    enabled: true
+    exclude: []
+  Summary::Length:
+    enabled: true
+    exclude: []
+  Summary::Delimiter:
+    enabled: true
+    exclude: []
+  Summary::SingleLine:
+    enabled: true
+    exclude: []
