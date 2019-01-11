@@ -1,5 +1,7 @@
 require 'jsonapi/version'
 
+# JSON:API
 module JSONAPI
-  # Your code goes here...
+  # JSONAPI media type.
+  MEDIA_TYPE = 'application/vnd.api+json'.freeze
 end
