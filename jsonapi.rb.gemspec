@@ -9,8 +9,10 @@ Gem::Specification.new do |spec|
   spec.authors       = ['Stas Suscov']
   spec.email         = ['stas@nerd.ro']
 
-  spec.summary       = %q{So you say you need JSON:API support in your API...}
-  spec.description   = %q{This + FastJSONAPI = ♥}
+  spec.summary       = 'So you say you need JSON:API support in your API...'
+  spec.description   = (
+    'JSON:API serialization, error handling, filtering and pagination.'
+  )
   spec.homepage      = 'https://github.com/stas/jsonapi.rb'
   spec.license       = 'MIT'
 
@@ -19,8 +21,17 @@ Gem::Specification.new do |spec|
   end
   spec.require_paths = ['lib']
 
+  spec.add_dependency 'fast_jsonapi', '~> 1.5'
+  spec.add_dependency 'ransack', '~> 2.1'
+
   spec.add_development_dependency 'bundler'
+  spec.add_development_dependency 'rails'
+  spec.add_development_dependency 'sqlite3'
+  spec.add_development_dependency 'ffaker'
   spec.add_development_dependency 'rspec', '~> 3.0'
+  spec.add_development_dependency 'rspec-rails'
+  spec.add_development_dependency 'jsonapi-rspec'
   spec.add_development_dependency 'yardstick'
   spec.add_development_dependency 'rubocop-rails_config'
+  spec.add_development_dependency 'simplecov'
 end
