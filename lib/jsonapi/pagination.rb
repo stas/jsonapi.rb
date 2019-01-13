@@ -39,7 +39,9 @@ module JSONAPI
 
       pagination.each do |page_name, number|
         original_params[:page][:number] = number
-        links[page_name] = original_url + CGI.unescape(original_params.to_query)
+        links[page_name] = original_url + CGI.unescape(
+          original_params.to_query
+        )
       end
 
       links
@@ -47,7 +49,7 @@ module JSONAPI
 
     # Generates pagination numbers
     #
-    # @return [Hash] with the first, previous, next, current and last page number
+    # @return [Hash] with the first, previous, next, current, last page numbers
     def jsonapi_pagination_meta(resources)
       return {} unless JSONAPI::Rails.is_collection?(resources)
 

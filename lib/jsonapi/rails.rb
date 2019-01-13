@@ -63,14 +63,16 @@ module JSONAPI
         options[:meta] ||= (
           jsonapi_meta(resource) if respond_to?(:jsonapi_meta, true))
         options[:links] ||= (
-          jsonapi_pagination(resource) if respond_to?(:jsonapi_pagination, true))
+          jsonapi_pagination(resource) if respond_to?(:jsonapi_pagination, true)
+        )
 
         # If it's an empty collection, return it directly.
         if JSONAPI::Rails.is_collection?(resource) && !resource.any?
           return options.slice(:meta, :links).merge(data: []).to_json
         end
 
-        options[:fields] ||= jsonapi_fields if respond_to?(:jsonapi_fields, true)
+        options[:fields] ||= (
+          jsonapi_fields if respond_to?(:jsonapi_fields, true))
         options[:include] ||= (
           jsonapi_include if respond_to?(:jsonapi_include, true))
 
