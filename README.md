@@ -1,5 +1,7 @@
 # JSONAPI.rb :electric_plug:
 
+[![Build Status](https://travis-ci.org/stas/jsonapi.rb.svg?branch=master)](https://travis-ci.org/stas/jsonapi.rb)
+
 So you say you need [JSON:API](https://jsonapi.org/) support in your API...
 
 > - hey how did your hackathon go?
