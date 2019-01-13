@@ -16,7 +16,8 @@ RSpec.describe UsersController, type: :request do
 
     it do
       expect(response_json['data'].size).to eq(0)
-      expect(response_json['meta']).to eq('many' => true)
+      expect(response_json['meta'])
+        .to eq('many' => true, 'pagination' => { 'current' => 1 })
     end
 
     context 'with users' do
@@ -66,6 +67,14 @@ RSpec.describe UsersController, type: :request do
             expect(response_json['data'].size).to eq(1)
             expect(response_json['data'][0]).to have_id(second_user.id.to_s)
 
+            expect(response_json['meta']['pagination']).to eq(
+              'current' => 2,
+              'first' => 1,
+              'prev' => 1,
+              'next' => 3,
+              'last' => 3
+            )
+
             expect(response_json).to have_link(:self)
             expect(response_json).to have_link(:prev)
             expect(response_json).to have_link(:first)
@@ -98,6 +107,12 @@ RSpec.describe UsersController, type: :request do
             expect(response).to have_http_status(:ok)
             expect(response_json['data'].size).to eq(1)
 
+            expect(response_json['meta']['pagination']).to eq(
+              'current' => 3,
+              'first' => 1,
+              'prev' => 2
+            )
+
             expect(response_json).to have_link(:self)
             expect(response_json).to have_link(:prev)
             expect(response_json).to have_link(:first)
@@ -125,6 +140,12 @@ RSpec.describe UsersController, type: :request do
             expect(response).to have_http_status(:ok)
             expect(response_json['data'].size).to eq(1)
             expect(response_json['data'][0]).to have_id(third_user.id.to_s)
+
+            expect(response_json['meta']['pagination']).to eq(
+              'current' => 1,
+              'next' => 2,
+              'last' => 3
+            )
 
             expect(response_json).not_to have_link(:prev)
             expect(response_json).not_to have_link(:first)

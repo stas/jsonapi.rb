@@ -80,7 +80,10 @@ class UsersController < ActionController::Base
   private
 
   def jsonapi_meta(resources)
-    { many: true }
+    {
+      many: true,
+      pagination: jsonapi_pagination_meta(resources)
+    }
   end
 end
 

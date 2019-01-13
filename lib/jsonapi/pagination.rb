@@ -26,18 +26,33 @@ module JSONAPI::Pagination
   #
   # @return [Array]
   def jsonapi_pagination(resources)
-    links = {
-      self: request.base_url + request.original_fullpath
-    }
+    links = { self: request.base_url + request.original_fullpath }
+    pagination = jsonapi_pagination_meta(resources)
 
-    return links unless resources.respond_to?(:many?)
-
-    _, limit, page = jsonapi_pagination_params
+    return links if pagination.blank?
 
     original_params = params.except(
       *request.path_parameters.keys.map(&:to_s)).to_unsafe_h
     original_params[:page] ||= {}
     original_url = request.base_url + request.path + '?'
+
+    pagination.each do |page_name, number|
+      original_params[:page][:number] = number
+      links[page_name] = original_url + CGI.unescape(original_params.to_query)
+    end
+
+    links
+  end
+
+  # Generates pagination numbers
+  #
+  # @return [Hash] with the first, previous, next, current and last page number
+  def jsonapi_pagination_meta(resources)
+    return {} unless JSONAPI::Rails.is_collection?(resources)
+
+    _, limit, page = jsonapi_pagination_params
+
+    numbers = { current: page }
 
     if resources.respond_to?(:unscope)
       total = resources.unscope(:limit, :offset).count()
@@ -48,20 +63,16 @@ module JSONAPI::Pagination
     last_page = [1, (total.to_f / limit).ceil].max
 
     if page > 1
-      original_params[:page][:number] = 1
-      links[:first] = original_url + CGI.unescape(original_params.to_query)
-      original_params[:page][:number] = page - 1
-      links[:prev] = original_url + CGI.unescape(original_params.to_query)
+      numbers[:first] = 1
+      numbers[:prev] = page - 1
     end
 
     if page < last_page
-      original_params[:page][:number] = page + 1
-      links[:next] = original_url + CGI.unescape(original_params.to_query)
-      original_params[:page][:number] = last_page
-      links[:last] = original_url + CGI.unescape(original_params.to_query)
+      numbers[:next] = page + 1
+      numbers[:last] = last_page
     end
 
-    links
+    numbers
   end
 
   # Extracts the pagination params
