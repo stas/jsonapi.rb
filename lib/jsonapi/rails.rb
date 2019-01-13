@@ -13,7 +13,7 @@ module JSONAPI
       Mime::Type.register JSONAPI::MEDIA_TYPE, :jsonapi
 
       # Map the JSON parser to the JSONAPI mime type requests.
-      if Rails::VERSION::MAJOR >= 5
+      if ::Rails::VERSION::MAJOR >= 5
         parser = ActionDispatch::Request.parameter_parsers[:json]
         ActionDispatch::Request.parameter_parsers[:jsonapi] = parser
       else
