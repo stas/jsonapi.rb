@@ -31,7 +31,7 @@ Main goals:
 
 The available features include:
 
- * object serialization powered by (Fast JSON API)
+ * object serialization (powered by Fast JSON API)
  * [error handling](https://jsonapi.org/format/#errors) (parameters,
    validation, generic errors)
  * fetching of the data (support for
@@ -128,8 +128,6 @@ class MyController < ActionController::Base
   include JSONAPI::Errors
 
   def update
-    raise_error! if params[:id] == 'tada'
-
     record = Model.find(params[:id])
 
     if record.update(params.require(:data).require(:attributes).permit!)
@@ -160,7 +158,7 @@ class MyController < ActionController::Base
 
   # Overwrite/whitelist the includes
   def jsonapi_include(resources)
-    super - [:unwanted_attribute]
+    super & ['wanted_attribute']
   end
 end
 ```
@@ -218,6 +216,17 @@ end
 ```
 
 This will generate the relevant pagination _links_.
+
+If you want to add the pagination information to your meta,
+use the `jsonapi_pagination_meta` method:
+
+```ruby
+  def jsonapi_meta(resources)
+    pagination = jsonapi_pagination_meta(resources)
+
+    { pagination: pagination } if pagination.present?
+  end
+```
 
 ## Development
 
