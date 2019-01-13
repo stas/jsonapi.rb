@@ -1,3 +1,8 @@
+require 'jsonapi/errors'
+require 'jsonapi/fetching'
+require 'jsonapi/filtering'
+require 'jsonapi/pagination'
+require 'jsonapi/rails'
 require 'jsonapi/version'
 
 # JSON:API
