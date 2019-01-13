@@ -1,91 +1,93 @@
-# Pagination support
-module JSONAPI::Pagination
-  private
+module JSONAPI
+  # Pagination support
+  module Pagination
+    private
 
-  # Default number of items per page.
-  JSONAPI_PAGE_SIZE = 30
+    # Default number of items per page.
+    JSONAPI_PAGE_SIZE = 30
 
-  # Applies pagination to a set of resources
-  #
-  # Ex.: `GET /resource?page[number]=2&page[size]=10`
-  #
-  # @return [ActiveRecord::Base] a collection of resources
-  def jsonapi_paginate(resources)
-    offset, limit, _ = jsonapi_pagination_params
+    # Applies pagination to a set of resources
+    #
+    # Ex.: `GET /resource?page[number]=2&page[size]=10`
+    #
+    # @return [ActiveRecord::Base] a collection of resources
+    def jsonapi_paginate(resources)
+      offset, limit, _ = jsonapi_pagination_params
 
-    if resources.respond_to?(:offset)
-      resources = resources.offset(offset).limit(limit)
-    else
-      resources = resources[(offset)..(offset + limit)]
+      if resources.respond_to?(:offset)
+        resources = resources.offset(offset).limit(limit)
+      else
+        resources = resources[(offset)..(offset + limit)]
+      end
+
+      block_given? ? yield(resources) : resources
     end
 
-    block_given? ? yield(resources) : resources
-  end
+    # Generates the pagination links
+    #
+    # @return [Array]
+    def jsonapi_pagination(resources)
+      links = { self: request.base_url + request.original_fullpath }
+      pagination = jsonapi_pagination_meta(resources)
 
-  # Generates the pagination links
-  #
-  # @return [Array]
-  def jsonapi_pagination(resources)
-    links = { self: request.base_url + request.original_fullpath }
-    pagination = jsonapi_pagination_meta(resources)
+      return links if pagination.blank?
 
-    return links if pagination.blank?
+      original_params = params.except(
+        *request.path_parameters.keys.map(&:to_s)).to_unsafe_h
+      original_params[:page] ||= {}
+      original_url = request.base_url + request.path + '?'
 
-    original_params = params.except(
-      *request.path_parameters.keys.map(&:to_s)).to_unsafe_h
-    original_params[:page] ||= {}
-    original_url = request.base_url + request.path + '?'
+      pagination.each do |page_name, number|
+        original_params[:page][:number] = number
+        links[page_name] = original_url + CGI.unescape(original_params.to_query)
+      end
 
-    pagination.each do |page_name, number|
-      original_params[:page][:number] = number
-      links[page_name] = original_url + CGI.unescape(original_params.to_query)
+      links
     end
 
-    links
-  end
+    # Generates pagination numbers
+    #
+    # @return [Hash] with the first, previous, next, current and last page number
+    def jsonapi_pagination_meta(resources)
+      return {} unless JSONAPI::Rails.is_collection?(resources)
 
-  # Generates pagination numbers
-  #
-  # @return [Hash] with the first, previous, next, current and last page number
-  def jsonapi_pagination_meta(resources)
-    return {} unless JSONAPI::Rails.is_collection?(resources)
+      _, limit, page = jsonapi_pagination_params
 
-    _, limit, page = jsonapi_pagination_params
+      numbers = { current: page }
 
-    numbers = { current: page }
+      if resources.respond_to?(:unscope)
+        total = resources.unscope(:limit, :offset).count()
+      else
+        total = resources.size
+      end
 
-    if resources.respond_to?(:unscope)
-      total = resources.unscope(:limit, :offset).count()
-    else
-      total = resources.size
+      last_page = [1, (total.to_f / limit).ceil].max
+
+      if page > 1
+        numbers[:first] = 1
+        numbers[:prev] = page - 1
+      end
+
+      if page < last_page
+        numbers[:next] = page + 1
+        numbers[:last] = last_page
+      end
+
+      numbers
     end
 
-    last_page = [1, (total.to_f / limit).ceil].max
+    # Extracts the pagination params
+    #
+    # @return [Array] with the offset, limit and the current page number
+    def jsonapi_pagination_params
+      def_per_page = self.class.const_get(:JSONAPI_PAGE_SIZE).to_i
 
-    if page > 1
-      numbers[:first] = 1
-      numbers[:prev] = page - 1
+      pagination = params[:page].try(:slice, :number, :size) || {}
+      per_page = (pagination[:size] || def_per_page).to_f.to_i
+      per_page = def_per_page if per_page > def_per_page
+      num = [1, pagination[:number].to_f.to_i].max
+
+      [(num - 1) * per_page, per_page, num]
     end
-
-    if page < last_page
-      numbers[:next] = page + 1
-      numbers[:last] = last_page
-    end
-
-    numbers
-  end
-
-  # Extracts the pagination params
-  #
-  # @return [Array] with the offset, limit and the current page number
-  def jsonapi_pagination_params
-    def_per_page = self.class.const_get(:JSONAPI_PAGE_SIZE).to_i
-
-    pagination = params[:page].try(:slice, :number, :size) || {}
-    per_page = (pagination[:size] || def_per_page).to_f.to_i
-    per_page = def_per_page if per_page > def_per_page
-    num = [1, pagination[:number].to_f.to_i].max
-
-    [(num - 1) * per_page, per_page, num]
   end
 end
