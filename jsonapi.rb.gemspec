@@ -22,7 +22,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
 
   spec.add_dependency 'fast_jsonapi', '~> 1.5'
-  spec.add_dependency 'ransack', '~> 2.1'
+  spec.add_dependency 'ransack'
 
   spec.add_development_dependency 'bundler'
   spec.add_development_dependency 'rails'
