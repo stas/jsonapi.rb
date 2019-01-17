@@ -8,9 +8,10 @@ GIT
 PATH
   remote: .
   specs:
-    jsonapi.rb (1.1.2)
+    jsonapi.rb (1.2.0)
       fast_jsonapi (~> 1.5)
-      ransack (~> 2.1)
+      rack
+      ransack
 
 GEM
   remote: https://rubygems.org/
