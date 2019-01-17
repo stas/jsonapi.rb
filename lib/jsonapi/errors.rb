@@ -1,4 +1,4 @@
-require 'net/http/status'
+require 'rack/utils'
 require 'active_support/concern'
 
 module JSONAPI
@@ -11,7 +11,7 @@ module JSONAPI
 
     included do
       rescue_from StandardError do |exception|
-        error = { status: '500', title: Net::HTTP::STATUS_CODES[500] }
+        error = { status: '500', title: Rack::Utils::HTTP_STATUS_CODES[500] }
         render jsonapi_errors: [error], status: :internal_server_error
       end
 
@@ -19,7 +19,7 @@ module JSONAPI
         ActiveRecord::RecordNotFound
       ].each do |exception_class|
         rescue_from exception_class do |exception|
-          error = { status: '404', title: Net::HTTP::STATUS_CODES[404] }
+          error = { status: '404', title: Rack::Utils::HTTP_STATUS_CODES[404] }
           render jsonapi_errors: [error], status: :not_found
         end
       end
@@ -36,7 +36,7 @@ module JSONAPI
 
           error = {
             status: '422',
-            title: Net::HTTP::STATUS_CODES[422],
+            title: Rack::Utils::HTTP_STATUS_CODES[422],
             source: source
           }
 

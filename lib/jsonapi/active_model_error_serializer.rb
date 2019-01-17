@@ -11,7 +11,7 @@ module JSONAPI
     end
 
     attribute :title do
-      Net::HTTP::STATUS_CODES[422]
+      Rack::Utils::HTTP_STATUS_CODES[422]
     end
 
     attribute :code do |object|

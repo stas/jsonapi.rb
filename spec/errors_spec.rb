@@ -34,7 +34,7 @@ RSpec.describe NotesController, type: :request do
         expect(response_json['errors'].size).to eq(1)
         expect(response_json['errors'][0]['status']).to eq('422')
         expect(response_json['errors'][0]['title'])
-          .to eq(Net::HTTP::STATUS_CODES[422])
+          .to eq(Rack::Utils::HTTP_STATUS_CODES[422])
         expect(response_json['errors'][0]['source']).to eq('pointer' => '')
         expect(response_json['errors'][0]['detail']).to be_nil
       end
@@ -53,7 +53,7 @@ RSpec.describe NotesController, type: :request do
         expect(response_json['errors'][0]['status']).to eq('422')
         expect(response_json['errors'][0]['code']).to eq('blank')
         expect(response_json['errors'][0]['title'])
-          .to eq(Net::HTTP::STATUS_CODES[422])
+          .to eq(Rack::Utils::HTTP_STATUS_CODES[422])
         expect(response_json['errors'][0]['source'])
           .to eq('pointer' => '/data/relationships/user')
         expect(response_json['errors'][0]['detail'])
@@ -73,7 +73,7 @@ RSpec.describe NotesController, type: :request do
           expect(response_json['errors'][0]['status']).to eq('422')
           expect(response_json['errors'][0]['code']).to eq('invalid')
           expect(response_json['errors'][0]['title'])
-            .to eq(Net::HTTP::STATUS_CODES[422])
+            .to eq(Rack::Utils::HTTP_STATUS_CODES[422])
           expect(response_json['errors'][0]['source'])
               .to eq('pointer' => '/data/attributes/title')
           expect(response_json['errors'][0]['detail'])
@@ -106,7 +106,7 @@ RSpec.describe NotesController, type: :request do
         expect(response_json['errors'].size).to eq(1)
         expect(response_json['errors'][0]['status']).to eq('404')
         expect(response_json['errors'][0]['title'])
-          .to eq(Net::HTTP::STATUS_CODES[404])
+          .to eq(Rack::Utils::HTTP_STATUS_CODES[404])
         expect(response_json['errors'][0]['source']).to be_nil
         expect(response_json['errors'][0]['detail']).to be_nil
       end
@@ -121,7 +121,7 @@ RSpec.describe NotesController, type: :request do
         expect(response_json['errors'].size).to eq(1)
         expect(response_json['errors'][0]['status']).to eq('500')
         expect(response_json['errors'][0]['title'])
-          .to eq(Net::HTTP::STATUS_CODES[500])
+          .to eq(Rack::Utils::HTTP_STATUS_CODES[500])
         expect(response_json['errors'][0]['source']).to be_nil
         expect(response_json['errors'][0]['detail']).to be_nil
       end
