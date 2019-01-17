@@ -37,10 +37,12 @@ module JSONAPI
     attribute :source do |object, params|
       error_key, _ = object
       model_serializer = params[:model_serializer]
+      attrs = (model_serializer.attributes_to_serialize || {}).keys
+      rels = (model_serializer.relationships_to_serialize || {}).keys
 
-      if model_serializer.attributes_to_serialize.keys.include?(error_key)
+      if attrs.include?(error_key)
         { pointer: "/data/attributes/#{error_key}" }
-      elsif model_serializer.relationships_to_serialize.keys.include?(error_key)
+      elsif rels.include?(error_key)
         { pointer: "/data/relationships/#{error_key}" }
       else
         { pointer: '' }
