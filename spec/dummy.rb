@@ -52,6 +52,8 @@ class NoteSerializer
 end
 
 class Dummy < Rails::Application
+  secrets.secret_key_base = '_'
+
   routes.draw do
     scope defaults: { format: :jsonapi } do
       resources :users, only: [:index]

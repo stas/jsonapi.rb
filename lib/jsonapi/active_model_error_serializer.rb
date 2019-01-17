@@ -16,13 +16,21 @@ module JSONAPI
 
     attribute :code do |object|
       _, error_hash = object
-      error_hash[:error]
+      error_hash[:error] || error_hash[:message]
+        .to_s.delete("''").parameterize('_')
     end
 
     attribute :detail do |object, params|
       error_key, error_hash = object
       errors_object = params[:model].errors
-      message = errors_object.generate_message(error_key, error_hash[:error])
+
+      # Rails 4 provides just the message.
+      if error_hash[:error].present?
+        message = errors_object.generate_message(error_key, error_hash[:error])
+      else
+        message = error_hash[:message]
+      end
+
       errors_object.full_message(error_key, message)
     end
 

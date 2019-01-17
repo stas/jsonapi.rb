@@ -17,8 +17,7 @@ module JSONAPI
         parser = ActionDispatch::Request.parameter_parsers[:json]
         ActionDispatch::Request.parameter_parsers[:jsonapi] = parser
       else
-        parser = ActionDispatch::ParamsParser::DEFAULT_PARSERS[Mime[:json]]
-        ActionDispatch::ParamsParser::DEFAULT_PARSERS[Mime[:jsonapi]] = parser
+        ActionDispatch::ParamsParser::DEFAULT_PARSERS[Mime[:jsonapi]] = :json
       end
 
       self.add_renderer!
@@ -39,11 +38,17 @@ module JSONAPI
           .serialized_json unless resource.is_a?(ActiveModel::Errors)
 
         errors = []
-        model = resource.marshal_dump.first
-        model_serializer = JSONAPI::Rails.serializer_class(model)
+        model = resource.instance_variable_get('@base')
+        model_serializer = JSONAPI::Rails.serializer_class(model, false)
 
-        resource.details.each do |error_key, error_hashes|
+        details = resource.messages
+        details = resource.details if resource.respond_to?(:details)
+
+        details.each do |error_key, error_hashes|
           error_hashes.each do |error_hash|
+            # Rails 4 provides just the message.
+            error_hash = { message: error_hash } unless error_hash.is_a?(Hash)
+
             errors << [ error_key, error_hash ]
           end
         end
