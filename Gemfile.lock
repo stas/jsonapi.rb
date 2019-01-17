@@ -8,7 +8,7 @@ GIT
 PATH
   remote: .
   specs:
-    jsonapi.rb (1.2.0)
+    jsonapi.rb (1.2.1)
       fast_jsonapi (~> 1.5)
       rack
       ransack
