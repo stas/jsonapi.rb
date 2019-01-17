@@ -32,7 +32,8 @@ module JSONAPI
       ActionController::Renderers.add(:jsonapi_errors) do |resource, options|
         self.content_type ||= Mime[:jsonapi]
 
-        resource = [resource] unless JSONAPI::Rails.is_collection?(resource)
+        many = JSONAPI::Rails.is_collection?(resource, options[:is_collection])
+        resource = [resource] unless many
 
         return JSONAPI::ErrorSerializer.new(resource, options)
           .serialized_json unless resource.is_a?(ActiveModel::Errors)
@@ -67,7 +68,8 @@ module JSONAPI
         )
 
         # If it's an empty collection, return it directly.
-        if JSONAPI::Rails.is_collection?(resource) && !resource.any?
+        many = JSONAPI::Rails.is_collection?(resource, options[:is_collection])
+        if many && !resource.any?
           return options.slice(:meta, :links).merge(data: []).to_json
         end
 
@@ -76,25 +78,30 @@ module JSONAPI
         options[:include] ||= (
           jsonapi_include if respond_to?(:jsonapi_include, true))
 
-        serializer_class = JSONAPI::Rails.serializer_class(resource)
+        serializer_class = JSONAPI::Rails.serializer_class(resource, many)
         serializer_class.new(resource, options).serialized_json
       end
     end
 
     # Checks if an object is a collection
     #
-    # @param object [Object] to check
+    # Stollen from [FastJsonapi::ObjectSerializer], instance method.
+    #
+    # @param resource [Object] to check
+    # @param force_is_collection [NilClass] flag to overwrite
     # @return [TrueClass] upon success
-    def self.is_collection?(object)
-      object.is_a?(Enumerable) && !object.respond_to?(:each_pair)
+    def self.is_collection?(resource, force_is_collection = nil)
+      return force_is_collection unless force_is_collection.nil?
+
+      resource.respond_to?(:size) && !resource.respond_to?(:each_pair)
     end
 
     # Resolves resource serializer class
     #
     # @return [Class]
-    def self.serializer_class(resource)
+    def self.serializer_class(resource, is_collection)
       klass = resource.class
-      klass = resource.first.class if self.is_collection?(resource)
+      klass = resource.first.class if is_collection
 
       "#{klass.name}Serializer".constantize
     end
