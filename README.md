@@ -195,6 +195,24 @@ $ curl -X GET \
   &sort=-model_attr,relationship_attr
 ```
 
+#### Sorting using expressions
+
+You can use basic aggregations like `min`, `max`, `avg`, `sum` and `count`
+when sorting. This is an optional feature since SQL aggregations require
+grouping. To enable expressions along with filters, use the option flags:
+
+```ruby
+options = { sort_with_expressions: true }
+jsonapi_filter(User.all, allowed_fields, options) do |filtered|
+  render jsonapi: result.group('id').to_a
+end
+```
+
+This allows you to run queries like:
+
+```bash
+$ curl -X GET /api/resources?sort=-model_attr_sum
+```
 
 ### Pagination
 
