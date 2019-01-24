@@ -33,7 +33,6 @@ Ransack.configure do |config|
   )
 end
 
-
 Ransack::Visitor.class_eval do
   alias_method :original_visit_Ransack_Nodes_Sort, :visit_Ransack_Nodes_Sort
 
@@ -49,7 +48,9 @@ Ransack::Visitor.class_eval do
     # Fallback to support the expressions...
     binded = Ransack::Nodes::Condition.extract(node.context, node.name, nil)
     valid = (binded.valid? if binded.respond_to?(:valid?)) || true
-    binded.arel_predicate if binded.present? && valid
+    return unless binded.present? && valid
+
+    binded.arel_predicate.public_send(node.dir)
   end
 end
 

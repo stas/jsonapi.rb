@@ -42,7 +42,7 @@ RSpec.describe UsersController, type: :request do
         it do
           expect(response).to have_http_status(:ok)
           expect(response_json['data'].size).to eq(3)
-          expect(response_json['data'][2]).to have_id(second_user.id.to_s)
+          expect(response_json['data'][0]).to have_id(second_user.id.to_s)
         end
       end
 
