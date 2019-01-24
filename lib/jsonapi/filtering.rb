@@ -1,8 +1,21 @@
 require 'ransack/predicate'
+require_relative 'patches'
 
 # Filtering and sorting support
 module JSONAPI
   module Filtering
+    # Parses and returns the attribute and the predicate of a ransack field
+    #
+    # @param requested_field [String] the field to parse
+    # @return [Array] with the fields and the predicate
+    def self.extract_attributes_and_predicate(requested_field)
+      field_name = requested_field.to_s.dup
+      predicate = Ransack::Predicate.detect_and_strip_from_string!(field_name)
+      predicate = Ransack::Predicate.named(predicate)
+
+      [field_name.split(/_and_|_or_/), predicate]
+    end
+
     private
 
     # Applies filtering and sorting to a set of resources if requested
@@ -15,6 +28,7 @@ module JSONAPI
     # @param allowed_fields [Array] a list of allowed fields to be filtered
     # @return [ActiveRecord::Base] a collection of resources
     def jsonapi_filter(resources, allowed_fields)
+      allowed_fields = allowed_fields.map(&:to_s)
       extracted_params = jsonapi_filter_params(allowed_fields)
       extracted_params[:sorts] = jsonapi_sort_params(allowed_fields)
       resources = resources.ransack(extracted_params)
@@ -34,11 +48,8 @@ module JSONAPI
       allowed_fields = allowed_fields.map(&:to_s)
 
       requested.each_pair do |requested_field, to_filter|
-        field_name = requested_field.dup
-        predicate = Ransack::Predicate.detect_and_strip_from_string!(field_name)
-        predicate = Ransack::Predicate.named(predicate)
-
-        field_names = field_name.split(/_and_|_or_/)
+        field_names, predicate = JSONAPI::Filtering
+          .extract_attributes_and_predicate(requested_field)
 
         if to_filter.is_a?(String) && to_filter.include?(',')
           to_filter = to_filter.split(',')
@@ -52,24 +63,32 @@ module JSONAPI
       filtered
     end
 
-    # Extracts and whitelists allowed fields to be sorted
+    # Extracts and whitelists allowed fields (or expressions) to be sorted
     #
     # @param allowed_fields [Array] a list of allowed fields to be sorted
     # @return [Hash] to be passed to [ActiveRecord::Base#order]
     def jsonapi_sort_params(allowed_fields)
+      filtered = []
       requested = params[:sort].to_s.split(',')
-      requested.map! do |requested_field|
-        desc = requested_field.to_s.start_with?('-')
-        [
-          desc ? requested_field[1..-1] : requested_field,
-          desc ? 'desc' : 'asc'
-        ]
+
+      requested.each do |requested_field|
+        if requested_field.to_s.start_with?('-')
+          dir = 'desc'
+          requested_field = requested_field[1..-1]
+        else
+          dir = 'asc'
+        end
+
+        field_names, _ = JSONAPI::Filtering
+          .extract_attributes_and_predicate(requested_field)
+
+        next unless (field_names - allowed_fields).empty?
+
+        # Convert to strings instead of hashes to allow joined table columns.
+        filtered << [requested_field, dir].join(' ')
       end
 
-      # Convert to strings instead of hashes to allow joined table columns.
-      requested.to_h.slice(*allowed_fields.map(&:to_s)).map do |field, dir|
-        [field, dir].join(' ')
-      end
+      filtered
     end
   end
 end
