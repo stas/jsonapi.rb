@@ -24,6 +24,7 @@ ActiveRecord::Schema.define do
   create_table :notes, force: true do |t|
     t.string :title
     t.integer :user_id
+    t.integer :quantity
     t.timestamps
   end
 end
@@ -68,10 +69,20 @@ class UsersController < ActionController::Base
   include JSONAPI::Pagination
 
   def index
-    allowed_fields = [:first_name, :last_name, :created_at, :notes_created_at]
+    allowed_fields = [
+      :first_name, :last_name, :created_at,
+      :notes_created_at, :notes_quantity
+    ]
 
     jsonapi_filter(User.all, allowed_fields) do |filtered|
-      result = params[:as_list] ? filtered.result.to_a : filtered.result
+      result = filtered.result
+
+      if params[:sort].to_s.include?('notes_quantity')
+        render jsonapi: result.group('id').to_a
+        return
+      end
+
+      result = result.to_a if params[:as_list]
 
       jsonapi_paginate(result) do |paginated|
         render jsonapi: paginated

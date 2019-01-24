@@ -58,6 +58,7 @@ module RSpecHelpers
   def create_note(user = nil)
     Note.create!(
       title: FFaker::Company.name,
+      quantity: rand(10),
       user: (user || create_user)
     )
   end

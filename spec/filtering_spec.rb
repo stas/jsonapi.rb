@@ -34,6 +34,18 @@ RSpec.describe UsersController, type: :request do
         end
       end
 
+      context 'returns sorted users by notes quantity sum' do
+        let(:params) do
+          { sort: '-notes_quantity_sum' }
+        end
+
+        it do
+          expect(response).to have_http_status(:ok)
+          expect(response_json['data'].size).to eq(3)
+          expect(response_json['data'][2]).to have_id(second_user.id.to_s)
+        end
+      end
+
       context 'returns sorted users by notes' do
         let(:params) do
           { sort: '-notes_created_at' }
