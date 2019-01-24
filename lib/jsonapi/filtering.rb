@@ -26,11 +26,12 @@ module JSONAPI
     # Ex.: `GET /resource?filter[region_matches_any]=Lisb%&sort=-created_at,id`
     #
     # @param allowed_fields [Array] a list of allowed fields to be filtered
+    # @param options [Hash] extra flags to enable/disable features
     # @return [ActiveRecord::Base] a collection of resources
-    def jsonapi_filter(resources, allowed_fields)
+    def jsonapi_filter(resources, allowed_fields, options = {})
       allowed_fields = allowed_fields.map(&:to_s)
       extracted_params = jsonapi_filter_params(allowed_fields)
-      extracted_params[:sorts] = jsonapi_sort_params(allowed_fields)
+      extracted_params[:sorts] = jsonapi_sort_params(allowed_fields, options)
       resources = resources.ransack(extracted_params)
       block_given? ? yield(resources) : resources
     end
@@ -66,8 +67,9 @@ module JSONAPI
     # Extracts and whitelists allowed fields (or expressions) to be sorted
     #
     # @param allowed_fields [Array] a list of allowed fields to be sorted
+    # @param options [Hash] extra options to enable/disable features
     # @return [Hash] to be passed to [ActiveRecord::Base#order]
-    def jsonapi_sort_params(allowed_fields)
+    def jsonapi_sort_params(allowed_fields, options = {})
       filtered = []
       requested = params[:sort].to_s.split(',')
 
@@ -79,10 +81,11 @@ module JSONAPI
           dir = 'asc'
         end
 
-        field_names, _ = JSONAPI::Filtering
+        field_names, predicate = JSONAPI::Filtering
           .extract_attributes_and_predicate(requested_field)
 
         next unless (field_names - allowed_fields).empty?
+        next if !options[:sort_with_expressions] && predicate
 
         # Convert to strings instead of hashes to allow joined table columns.
         filtered << [requested_field, dir].join(' ')
