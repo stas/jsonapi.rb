@@ -9,11 +9,16 @@ module JSONAPI
     # @param requested_field [String] the field to parse
     # @return [Array] with the fields and the predicate
     def self.extract_attributes_and_predicate(requested_field)
+      predicates = []
       field_name = requested_field.to_s.dup
-      predicate = Ransack::Predicate.detect_and_strip_from_string!(field_name)
-      predicate = Ransack::Predicate.named(predicate)
 
-      [field_name.split(/_and_|_or_/), predicate]
+      while Ransack::Predicate.detect_from_string(field_name).present? do
+        predicate = Ransack::Predicate
+          .detect_and_strip_from_string!(field_name)
+        predicates << Ransack::Predicate.named(predicate)
+      end
+
+      [field_name.split(/_and_|_or_/), predicates.reverse]
     end
 
     private
@@ -49,14 +54,14 @@ module JSONAPI
       allowed_fields = allowed_fields.map(&:to_s)
 
       requested.each_pair do |requested_field, to_filter|
-        field_names, predicate = JSONAPI::Filtering
+        field_names, predicates = JSONAPI::Filtering
           .extract_attributes_and_predicate(requested_field)
 
         if to_filter.is_a?(String) && to_filter.include?(',')
           to_filter = to_filter.split(',')
         end
 
-        if predicate && (field_names - allowed_fields).empty?
+        if predicates.any? && (field_names - allowed_fields).empty?
           filtered[requested_field] = to_filter
         end
       end
@@ -81,11 +86,11 @@ module JSONAPI
           dir = 'asc'
         end
 
-        field_names, predicate = JSONAPI::Filtering
+        field_names, predicates = JSONAPI::Filtering
           .extract_attributes_and_predicate(requested_field)
 
         next unless (field_names - allowed_fields).empty?
-        next if !options[:sort_with_expressions] && predicate
+        next if !options[:sort_with_expressions] && predicates.any?
 
         # Convert to strings instead of hashes to allow joined table columns.
         filtered << [requested_field, dir].join(' ')

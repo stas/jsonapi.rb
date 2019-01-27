@@ -1,6 +1,29 @@
 require 'spec_helper'
 
 RSpec.describe UsersController, type: :request do
+  describe '#extract_attributes_and_predicate' do
+    context 'mixed attributes (and/or)' do
+      it 'extracts ANDs' do
+        attributes, predicates = JSONAPI::Filtering
+          .extract_attributes_and_predicate('attr1_and_attr2_eq')
+        expect(attributes).to eq(['attr1', 'attr2'])
+        expect(predicates.size).to eq(1)
+        expect(predicates[0].name).to eq('eq')
+      end
+    end
+
+    context 'mixed predicates' do
+      it 'extracts in order' do
+        attributes, predicates = JSONAPI::Filtering
+          .extract_attributes_and_predicate('attr1_sum_eq')
+        expect(attributes).to eq(['attr1'])
+        expect(predicates.size).to eq(2)
+        expect(predicates[0].name).to eq('sum')
+        expect(predicates[1].name).to eq('eq')
+      end
+    end
+  end
+
   describe 'GET /users' do
     let!(:user) { }
     let(:params) { }
