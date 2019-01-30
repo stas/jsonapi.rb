@@ -50,7 +50,10 @@ Ransack::Visitor.class_eval do
     valid = (binded.valid? if binded.respond_to?(:valid?)) || true
     return unless binded.present? && valid
 
-    binded.arel_predicate.public_send(node.dir)
+    arel_pred = binded.arel_predicate
+    # Remove any alias when sorting...
+    arel_pred.alias = nil if arel_pred.respond_to?(:alias=)
+    arel_pred.public_send(node.dir)
   end
 end
 
