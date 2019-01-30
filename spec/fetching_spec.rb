@@ -21,7 +21,7 @@ RSpec.describe UsersController, type: :request do
         let(:params) do
           {
             include: 'notes',
-            fields:  { note: 'id,updated_at' }
+            fields:  { note: 'title,updated_at' }
           }
         end
 
@@ -33,10 +33,11 @@ RSpec.describe UsersController, type: :request do
               { 'id' => note.id.to_s, 'type' => 'note' }
           ])
           expect(response_json['included']).to include(
-            'id'   => note.id.to_s,
+            'id' => note.id.to_s,
             'type' => 'note',
             'relationships' => {},
             'attributes' => {
+              'title' => note.title,
               'updated_at' => note.updated_at.as_json
             }
           )

@@ -9,8 +9,10 @@ module JSONAPI
     #
     # @return [Hash]
     def jsonapi_fields
+      return {} unless params[:fields].respond_to?(:each_pair)
+
       ActiveSupport::HashWithIndifferentAccess.new.tap do |h|
-        (params[:fields] || []).each do |k, v|
+        params[:fields].each do |k, v|
           h[k] = v.split(',').map(&:strip).compact
         end
       end
