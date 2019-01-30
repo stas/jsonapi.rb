@@ -8,7 +8,7 @@ module JSONAPI
     #
     # @param requested_field [String] the field to parse
     # @return [Array] with the fields and the predicate
-    def self.extract_attributes_and_predicate(requested_field)
+    def self.extract_attributes_and_predicates(requested_field)
       predicates = []
       field_name = requested_field.to_s.dup
 
@@ -55,7 +55,7 @@ module JSONAPI
 
       requested.each_pair do |requested_field, to_filter|
         field_names, predicates = JSONAPI::Filtering
-          .extract_attributes_and_predicate(requested_field)
+          .extract_attributes_and_predicates(requested_field)
 
         if to_filter.is_a?(String) && to_filter.include?(',')
           to_filter = to_filter.split(',')
@@ -87,7 +87,7 @@ module JSONAPI
         end
 
         field_names, predicates = JSONAPI::Filtering
-          .extract_attributes_and_predicate(requested_field)
+          .extract_attributes_and_predicates(requested_field)
 
         next unless (field_names - allowed_fields).empty?
         next if !options[:sort_with_expressions] && predicates.any?
