@@ -121,6 +121,9 @@ when a record is not found.
 
 To render the validation errors, just pass it to the error renderer.
 
+To use an exception notifier, overwrite the
+`render_jsonapi_internal_server_error` method in your controller.
+
 Here's an example:
 
 ```ruby
@@ -135,6 +138,14 @@ class MyController < ActionController::Base
     else
       render jsonapi_errors: record.errors, status: :unprocessable_entity
     end
+  end
+
+  private
+
+  def render_jsonapi_internal_server_error(exception)
+    # Call your exception notifier here. Example:
+    # Raven.capture_exception(exception)
+    super(exception)
   end
 end
 ```
