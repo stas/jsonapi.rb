@@ -38,18 +38,19 @@ class Note < ActiveRecord::Base
   belongs_to :user, required: true
 end
 
+class CustomNoteSerializer
+  include FastJsonapi::ObjectSerializer
+
+  set_type :note
+  belongs_to :user
+  attributes(:title, :created_at, :updated_at)
+end
+
 class UserSerializer
   include FastJsonapi::ObjectSerializer
 
-  has_many :notes
+  has_many :notes, serializer: CustomNoteSerializer
   attributes(:first_name, :last_name, :created_at, :updated_at)
-end
-
-class NoteSerializer
-  include FastJsonapi::ObjectSerializer
-
-  belongs_to :user
-  attributes(:title, :created_at, :updated_at)
 end
 
 class Dummy < Rails::Application
@@ -117,6 +118,12 @@ class NotesController < ActionController::Base
   end
 
   private
+
+  def jsonapi_serializer_class(resource, is_collection)
+    JSONAPI::Rails.serializer_class(resource, is_collection)
+  rescue NameError
+    CustomNoteSerializer
+  end
 
   def note_params
     {

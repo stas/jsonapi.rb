@@ -92,6 +92,25 @@ Please follow the
 [Fast JSON API guide](https://github.com/Netflix/fast_jsonapi#serializer-definition)
 on how to define a serializer.
 
+To provide a different naming scheme implement the `jsonapi_serializer_class`
+method in your resource or application controller.
+
+Here's an example:
+```ruby
+class CustomNamingController < ActionController::Base
+
+  # ...
+
+  private
+
+  def jsonapi_serializer_class(resource, is_collection)
+    JSONAPI::Rails.serializer_class(resource, is_collection)
+  rescue NameError
+    # your serializer class naming implementation
+  end
+end
+```
+
 #### Collection Meta
 
 To provide meta information for a collection, provide the `jsonapi_meta`
