@@ -119,10 +119,17 @@ class NotesController < ActionController::Base
 
   private
 
+  def render_jsonapi_internal_server_error(exception)
+    Rails.logger.error(exception)
+    super(exception)
+  end
+
   def jsonapi_serializer_class(resource, is_collection)
     JSONAPI::Rails.serializer_class(resource, is_collection)
   rescue NameError
-    CustomNoteSerializer
+    klass = resource.class
+    klass = resource.first.class if is_collection
+    "Custom#{klass.name}Serializer".constantize
   end
 
   def note_params

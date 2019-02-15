@@ -41,7 +41,7 @@ module JSONAPI
         model = resource.instance_variable_get('@base')
 
         if respond_to?(:jsonapi_serializer_class, true)
-          model_serializer = jsonapi_serializer_class(resource, false)
+          model_serializer = jsonapi_serializer_class(model, false)
         else
           model_serializer = JSONAPI::Rails.serializer_class(model, false)
         end
