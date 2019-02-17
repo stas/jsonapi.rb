@@ -11,4 +11,4 @@ env:
 before_install:
   - rm -f Gemfile.lock
   - gem uninstall -v '>= 2' -i $(rvm gemdir)@global -ax bundler || true
-  - bundler || gem install bundler -v '< 2'
+  - bundler --version || gem install bundler -v '< 2'
