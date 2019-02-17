@@ -113,6 +113,8 @@ class NotesController < ActionController::Base
     if note.update(note_params)
       render jsonapi: note
     else
+      note.errors.add(:title, message: 'has typos') if note.errors.key?(:title)
+
       render jsonapi_errors: note.errors, status: :unprocessable_entity
     end
   end

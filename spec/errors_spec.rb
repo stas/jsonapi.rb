@@ -78,6 +78,14 @@ RSpec.describe NotesController, type: :request do
               .to eq('pointer' => '/data/attributes/title')
           expect(response_json['errors'][0]['detail'])
             .to eq('Title is invalid')
+
+          expect(response_json['errors'][1]['status']).to eq('422')
+          expect(response_json['errors'][1]['title'])
+            .to eq(Rack::Utils::HTTP_STATUS_CODES[422])
+          expect(response_json['errors'][1]['source'])
+            .to eq('pointer' => '/data/attributes/title')
+          expect(response_json['errors'][1]['detail'])
+            .to eq('Title has typos')
         end
       end
 
