@@ -51,7 +51,7 @@ RSpec.describe NotesController, type: :request do
         expect(response).to have_http_status(:unprocessable_entity)
         expect(response_json['errors'].size).to eq(1)
         expect(response_json['errors'][0]['status']).to eq('422')
-        expect(response_json['errors'][0]['code']).to eq('blank')
+        expect(response_json['errors'][0]['code']).to include('blank')
         expect(response_json['errors'][0]['title'])
           .to eq(Rack::Utils::HTTP_STATUS_CODES[422])
         expect(response_json['errors'][0]['source'])
@@ -69,9 +69,9 @@ RSpec.describe NotesController, type: :request do
 
         it do
           expect(response).to have_http_status(:unprocessable_entity)
-          expect(response_json['errors'].size).to eq(1)
+          expect(response_json['errors'].size).to eq(2)
           expect(response_json['errors'][0]['status']).to eq('422')
-          expect(response_json['errors'][0]['code']).to eq('invalid')
+          expect(response_json['errors'][0]['code']).to include('invalid')
           expect(response_json['errors'][0]['title'])
             .to eq(Rack::Utils::HTTP_STATUS_CODES[422])
           expect(response_json['errors'][0]['source'])
@@ -80,6 +80,13 @@ RSpec.describe NotesController, type: :request do
             .to eq('Title is invalid')
 
           expect(response_json['errors'][1]['status']).to eq('422')
+
+          if Rails::VERSION::MAJOR == 5
+            expect(response_json['errors'][1]['code']).to eq('invalid')
+          else
+            expect(response_json['errors'][1]['code']).to eq('has_typos')
+          end
+
           expect(response_json['errors'][1]['title'])
             .to eq(Rack::Utils::HTTP_STATUS_CODES[422])
           expect(response_json['errors'][1]['source'])

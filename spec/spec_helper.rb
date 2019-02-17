@@ -64,7 +64,24 @@ module RSpecHelpers
   end
 end
 
+module Rails4RequestMethods
+  [:get, :post, :put, :delete].each do |method_name|
+    define_method(method_name) do |path, named_args|
+      super(
+        path,
+        named_args.delete(:params),
+        named_args.delete(:headers)
+      )
+    end
+  end
+end
+
 RSpec.configure do |config|
   config.include RSpecHelpers, type: :request
   config.include RSpecHelpers, type: :controller
+
+  if ::Rails::VERSION::MAJOR == 4
+    config.include Rails4RequestMethods, type: :request
+    config.include Rails4RequestMethods, type: :controller
+  end
 end

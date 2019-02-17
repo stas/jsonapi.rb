@@ -3,5 +3,12 @@ sudo: false
 language: ruby
 cache: bundler
 rvm:
-  - 2.5.1
-before_install: gem install bundler
+  - 2.6.1
+  - 2.3.7
+env:
+  - RAILS_VERSION='~> 5'
+  - RAILS_VERSION='~> 4'
+before_install:
+  - rm -f Gemfile.lock
+  - gem uninstall -v '>= 2' -i $(rvm gemdir)@global -ax bundler || true
+  - bundler || gem install bundler -v '< 2'

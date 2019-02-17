@@ -4,3 +4,4 @@ source 'https://rubygems.org'
 gemspec
 
 gem 'jsonapi-rspec', github: 'stas/jsonapi-rspec'
+gem 'rails', ENV['RAILS_VERSION']
