@@ -41,8 +41,8 @@ RSpec.describe UsersController, type: :request do
           expect(response_json).not_to have_link(:first)
           expect(response_json).not_to have_link(:last)
 
-          expect(CGI.unescape(response_json['links']['self']))
-            .to include(CGI.unescape(params.to_query))
+          expect(URI.parse(response_json['links']['self']).query)
+            .to eq(CGI.unescape(params.to_query))
         end
 
         context 'even when it is an array' do
@@ -81,18 +81,19 @@ RSpec.describe UsersController, type: :request do
             expect(response_json).to have_link(:next)
             expect(response_json).to have_link(:last)
 
-            expect(CGI.unescape(response_json['links']['self']))
-              .to include(CGI.unescape(params.to_query))
-            expect(CGI.unescape(response_json['links']['self']))
-              .to include('page[number]=2')
-            expect(CGI.unescape(response_json['links']['prev']))
-              .to include('page[number]=1')
-            expect(CGI.unescape(response_json['links']['first']))
-              .to include('page[number]=1')
-            expect(CGI.unescape(response_json['links']['next']))
-              .to include('page[number]=3')
-            expect(CGI.unescape(response_json['links']['last']))
-              .to include('page[number]=3')
+            qry = CGI.unescape(params.to_query)
+            expect(URI.parse(response_json['links']['self']).query).to eq(qry)
+
+            qry = CGI.unescape(params.deep_merge(page: { number: 2 }).to_query)
+            expect(URI.parse(response_json['links']['self']).query).to eq(qry)
+
+            qry = CGI.unescape(params.deep_merge(page: { number: 1 }).to_query)
+            expect(URI.parse(response_json['links']['prev']).query).to eq(qry)
+            expect(URI.parse(response_json['links']['first']).query).to eq(qry)
+
+            qry = CGI.unescape(params.deep_merge(page: { number: 3 }).to_query)
+            expect(URI.parse(response_json['links']['next']).query).to eq(qry)
+            expect(URI.parse(response_json['links']['last']).query).to eq(qry)
           end
         end
 
@@ -119,12 +120,14 @@ RSpec.describe UsersController, type: :request do
             expect(response_json).not_to have_link(:next)
             expect(response_json).not_to have_link(:last)
 
-            expect(CGI.unescape(response_json['links']['self']))
-              .to include(CGI.unescape(params.to_query))
-            expect(CGI.unescape(response_json['links']['prev']))
-              .to include('page[number]=2')
-            expect(CGI.unescape(response_json['links']['first']))
-              .to include('page[number]=1')
+            expect(URI.parse(response_json['links']['self']).query)
+              .to eq(CGI.unescape(params.to_query))
+
+            qry = CGI.unescape(params.deep_merge(page: { number: 2 }).to_query)
+            expect(URI.parse(response_json['links']['prev']).query).to eq(qry)
+
+            qry = CGI.unescape(params.deep_merge(page: { number: 1 }).to_query)
+            expect(URI.parse(response_json['links']['first']).query).to eq(qry)
           end
         end
 
@@ -153,12 +156,14 @@ RSpec.describe UsersController, type: :request do
             expect(response_json).to have_link(:self)
             expect(response_json).to have_link(:last)
 
-            expect(CGI.unescape(response_json['links']['self']))
-              .to include(CGI.unescape(params.to_query))
-            expect(CGI.unescape(response_json['links']['next']))
-              .to include('page[number]=2')
-            expect(CGI.unescape(response_json['links']['last']))
-              .to include('page[number]=3')
+            expect(URI.parse(response_json['links']['self']).query)
+              .to eq(CGI.unescape(params.to_query))
+
+            qry = CGI.unescape(params.deep_merge(page: { number: 2 }).to_query)
+            expect(URI.parse(response_json['links']['next']).query).to eq(qry)
+
+            qry = CGI.unescape(params.deep_merge(page: { number: 3 }).to_query)
+            expect(URI.parse(response_json['links']['last']).query).to eq(qry)
           end
         end
       end

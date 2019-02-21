@@ -33,7 +33,9 @@ module JSONAPI
       return links if pagination.blank?
 
       original_params = params.except(
-        *request.path_parameters.keys.map(&:to_s)).to_unsafe_h
+        *request.path_parameters.keys.map(&:to_s)
+      ).to_unsafe_h.with_indifferent_access
+
       original_params[:page] ||= {}
       original_url = request.base_url + request.path + '?'
 
