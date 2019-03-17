@@ -67,6 +67,16 @@ Or install it yourself as:
 
 ## Usage
 
+ * [Object serialization](#object-serialization)
+ * [Collection meta](#collection-meta)
+ * [Error handling](#error-handling)
+ * [Includes and sparse fields](#includes-and-sparse-fields)
+ * [Filtering and sorting](#filtering-and-sorting)
+   * [Sorting using expressions](#sorting-using-expressions)
+ * [Pagination](#pagination)
+
+---
+
 To enable the support for Rails, add this to an initializer:
 
 ```ruby
@@ -79,7 +89,7 @@ JSONAPI::Rails.install!
 This will register the mime type and the `jsonapi` and `jsonapi_errors`
 renderers.
 
-### Object Serialization
+### Object serialization
 
 The `jsonapi` renderer will try to guess and resolve the serializer class based
 on the object class, and if it is a collection, based on the first item in the
@@ -111,7 +121,26 @@ class CustomNamingController < ActionController::Base
 end
 ```
 
-#### Collection Meta
+To provide extra parameters to the serializer,
+implement the `jsonapi_serializer_params` method.
+
+Here's an example:
+```ruby
+class CustomSerializerParamsController < ActionController::Base
+
+  # ...
+
+  private
+
+  def jsonapi_serializer_params
+    {
+      first_name_upcase: params[:upcase].present?
+    }
+  end
+end
+```
+
+#### Collection meta
 
 To provide meta information for a collection, provide the `jsonapi_meta`
 controller method.

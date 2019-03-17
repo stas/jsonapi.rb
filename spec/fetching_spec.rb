@@ -17,6 +17,23 @@ RSpec.describe UsersController, type: :request do
       let(:user) { users.last }
       let(:note) { third_user.notes.first }
 
+      context 'returns customers and dasherized first name' do
+        let(:params) do
+          { upcase: :yes }
+        end
+
+        it do
+          expect(response).to have_http_status(:ok)
+          expect(response_json['data'].size).to eq(users.size)
+
+          response_json['data'].each do |item|
+            user = users.select { |u| u.id == item['id'].to_i }.first
+            expect(item).to have_attribute('first_name')
+              .with_value(user.first_name.upcase)
+          end
+        end
+      end
+
       context 'returns customers included and sparse fields' do
         let(:params) do
           {

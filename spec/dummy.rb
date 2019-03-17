@@ -50,7 +50,15 @@ class UserSerializer
   include FastJsonapi::ObjectSerializer
 
   has_many :notes, serializer: CustomNoteSerializer
-  attributes(:first_name, :last_name, :created_at, :updated_at)
+  attributes(:last_name, :created_at, :updated_at)
+
+  attribute :first_name do |object, params|
+    if params[:first_name_upcase]
+      object.first_name.upcase
+    else
+      object.first_name
+    end
+  end
 end
 
 class Dummy < Rails::Application
@@ -98,6 +106,12 @@ class UsersController < ActionController::Base
     {
       many: true,
       pagination: jsonapi_pagination_meta(resources)
+    }
+  end
+
+  def jsonapi_serializer_params
+    {
+      first_name_upcase: params[:upcase]
     }
   end
 end

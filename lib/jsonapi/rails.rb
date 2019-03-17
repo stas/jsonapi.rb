@@ -4,6 +4,14 @@ require 'jsonapi/active_model_error_serializer'
 # Rails integration
 module JSONAPI
   module Rails
+    JSONAPI_METHODS_MAPPING = {
+      meta: :jsonapi_meta,
+      links: :jsonapi_pagination,
+      fields: :jsonapi_fields,
+      include: :jsonapi_include,
+      params: :jsonapi_serializer_params
+    }
+
     # Updates the mime types and registers the renderers
     #
     # @return [NilClass]
@@ -71,11 +79,10 @@ module JSONAPI
       ActionController::Renderers.add(:jsonapi) do |resource, options|
         self.content_type ||= Mime[:jsonapi]
 
-        options[:meta] ||= (
-          jsonapi_meta(resource) if respond_to?(:jsonapi_meta, true))
-        options[:links] ||= (
-          jsonapi_pagination(resource) if respond_to?(:jsonapi_pagination, true)
-        )
+        JSONAPI_METHODS_MAPPING.to_a[0..1].each do |opt, method_name|
+          next unless respond_to?(method_name, true)
+          options[opt] ||= send(method_name, resource)
+        end
 
         # If it's an empty collection, return it directly.
         many = JSONAPI::Rails.is_collection?(resource, options[:is_collection])
@@ -83,10 +90,9 @@ module JSONAPI
           return options.slice(:meta, :links).merge(data: []).to_json
         end
 
-        options[:fields] ||= (
-          jsonapi_fields if respond_to?(:jsonapi_fields, true))
-        options[:include] ||= (
-          jsonapi_include if respond_to?(:jsonapi_include, true))
+        JSONAPI_METHODS_MAPPING.to_a[2..-1].each do |opt, method_name|
+          options[opt] ||= send(method_name) if respond_to?(method_name, true)
+        end
 
         if respond_to?(:jsonapi_serializer_class, true)
           serializer_class = jsonapi_serializer_class(resource, many)
