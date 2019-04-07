@@ -216,7 +216,7 @@ class MyController < ActionController::Base
   private
 
   # Overwrite/whitelist the includes
-  def jsonapi_include(resources)
+  def jsonapi_include
     super & ['wanted_attribute']
   end
 end
