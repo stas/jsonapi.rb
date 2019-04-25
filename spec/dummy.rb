@@ -35,6 +35,7 @@ end
 
 class Note < ActiveRecord::Base
   validates_format_of :title, without: /BAD_TITLE/
+  validates_numericality_of :quantity, less_than: 100, if: :quantity?
   belongs_to :user, required: true
 end
 
@@ -43,7 +44,7 @@ class CustomNoteSerializer
 
   set_type :note
   belongs_to :user
-  attributes(:title, :created_at, :updated_at)
+  attributes(:title, :quantity, :created_at, :updated_at)
 end
 
 class UserSerializer
@@ -151,6 +152,7 @@ class NotesController < ActionController::Base
   def note_params
     {
       title: params.require(:data).require(:attributes).require(:title),
+      quantity: params.dig(:data, :attributes, :quantity),
       user_id: params.dig(:data, :relationships, :user, :id)
     }
   end

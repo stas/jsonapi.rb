@@ -32,7 +32,9 @@ module JSONAPI
           error_key, nil, error_hash[:error]
         )
       elsif error_hash[:error].present?
-        message = errors_object.generate_message(error_key, error_hash[:error])
+        message = errors_object.generate_message(
+          error_key, error_hash[:error], error_hash
+        )
       else
         message = error_hash[:message]
       end
