@@ -10,7 +10,7 @@ RSpec.describe NotesController, type: :request do
       {
         data: {
           attributes: { title: FFaker::Company.name },
-          relationships: { user: { id: user_id } }
+          relationships: { user: { data: { id: user_id } } }
         }
       }
     end
@@ -43,7 +43,7 @@ RSpec.describe NotesController, type: :request do
     context 'with an invalid payload' do
       let(:params) do
         payload = note_params.dup
-        payload[:data][:relationships][:user][:id] = nil
+        payload[:data][:relationships][:user][:data][:id] = nil
         payload
       end
 
@@ -116,8 +116,9 @@ RSpec.describe NotesController, type: :request do
       context 'as a param attribute' do
         let(:params) do
           payload = note_params.dup
-          payload[:data][:attributes][:created_at] = nil
           payload[:data][:attributes].delete(:title)
+          # To have any attribtues in the payload...
+          payload[:data][:attributes][:created_at] = nil
           payload
         end
 

@@ -78,6 +78,7 @@ class UsersController < ActionController::Base
   include JSONAPI::Fetching
   include JSONAPI::Filtering
   include JSONAPI::Pagination
+  include JSONAPI::Deserialization
 
   def index
     allowed_fields = [
@@ -120,6 +121,7 @@ end
 
 class NotesController < ActionController::Base
   include JSONAPI::Errors
+  include JSONAPI::Deserialization
 
   def update
     raise_error! if params[:id] == 'tada'
@@ -151,11 +153,10 @@ class NotesController < ActionController::Base
   end
 
   def note_params
-    {
-      title: params.require(:data).require(:attributes).require(:title),
-      quantity: params.dig(:data, :attributes, :quantity),
-      user_id: params.dig(:data, :relationships, :user, :id)
-    }
+    # Will trigger required attribute error handling
+    params.require(:data).require(:attributes).require(:title)
+
+    jsonapi_deserialize(params)
   end
 
   def jsonapi_meta(resources)

@@ -2,6 +2,7 @@ require 'jsonapi/errors'
 require 'jsonapi/fetching'
 require 'jsonapi/filtering'
 require 'jsonapi/pagination'
+require 'jsonapi/deserialization'
 require 'jsonapi/rails'
 require 'jsonapi/version'
 
