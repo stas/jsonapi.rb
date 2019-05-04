@@ -82,7 +82,7 @@ RSpec.describe NotesController, type: :request do
 
           expect(response_json['errors'][1]['status']).to eq('422')
 
-          if Rails::VERSION::MAJOR == 5
+          if Rails::VERSION::MAJOR >= 5
             expect(response_json['errors'][1]['code']).to eq('invalid')
           else
             expect(response_json['errors'][1]['code']).to eq('has_typos')
@@ -97,7 +97,7 @@ RSpec.describe NotesController, type: :request do
 
           expect(response_json['errors'][2]['status']).to eq('422')
 
-          if Rails::VERSION::MAJOR == 5
+          if Rails::VERSION::MAJOR >= 5
             expect(response_json['errors'][2]['code']).to eq('less_than')
           else
             expect(response_json['errors'][2]['code'])
