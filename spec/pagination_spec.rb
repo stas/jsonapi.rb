@@ -5,7 +5,7 @@ RSpec.describe UsersController, type: :request do
     let!(:user) { }
     let(:params) do
       {
-        page: { number: 'Nan' },
+        page: { number: 'Nan', size: 'NaN' },
         sort: '-created_at'
       }
     end
