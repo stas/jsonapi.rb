@@ -19,7 +19,7 @@ RSpec.describe UsersController, type: :request do
 
       context 'returns customers and dasherized first name' do
         let(:params) do
-          { upcase: :yes }
+          { upcase: :yes, fields: { unknown: nil } }
         end
 
         it do
