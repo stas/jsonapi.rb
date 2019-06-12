@@ -55,6 +55,22 @@ RSpec.describe UsersController, type: :request do
           expect(response_json['data'].size).to eq(1)
           expect(response_json['data'][0]).to have_id(third_user.id.to_s)
         end
+
+        context 'with a comma' do
+          let(:params) do
+            third_user.update(first_name: third_user.first_name + ',')
+
+            {
+              filter: { first_name_eq: third_user.first_name }
+            }
+          end
+
+          it do
+            expect(response).to have_http_status(:ok)
+            expect(response_json['data'].size).to eq(1)
+            expect(response_json['data'][0]).to have_id(third_user.id.to_s)
+          end
+        end
       end
 
       context 'returns sorted users by notes quantity sum' do
