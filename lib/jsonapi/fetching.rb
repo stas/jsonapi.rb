@@ -2,7 +2,6 @@ module JSONAPI
   # Inclusion and sparse fields support
   module Fetching
     private
-
     # Extracts and formats sparse fieldsets
     #
     # Ex.: `GET /resource?fields[relationship]=id,created_at`

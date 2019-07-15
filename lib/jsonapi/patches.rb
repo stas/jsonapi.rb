@@ -37,7 +37,6 @@ Ransack::Visitor.class_eval do
   alias_method :original_visit_Ransack_Nodes_Sort, :visit_Ransack_Nodes_Sort
 
   private
-
   # Original method assumes sorting is done only by attributes
   def visit_Ransack_Nodes_Sort(node)
     # Try the default sorting visitor method...
@@ -61,7 +60,6 @@ Ransack::Nodes::Condition.class_eval do
   alias_method :original_format_predicate, :format_predicate
 
   private
-
   # Original method doesn't respect the arity of expressions
   # See: lib/ransack/adapters/active_record/ransack/nodes/condition.rb#L30-L42
   def format_predicate(attribute)

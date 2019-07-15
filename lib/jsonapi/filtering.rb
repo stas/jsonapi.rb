@@ -22,7 +22,6 @@ module JSONAPI
     end
 
     private
-
     # Applies filtering and sorting to a set of resources if requested
     #
     # The fields follow [Ransack] specifications.

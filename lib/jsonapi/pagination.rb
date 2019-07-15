@@ -2,7 +2,6 @@ module JSONAPI
   # Pagination support
   module Pagination
     private
-
     # Default number of items per page.
     JSONAPI_PAGE_SIZE = 30
 

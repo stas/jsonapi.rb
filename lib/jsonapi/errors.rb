@@ -19,7 +19,6 @@ module JSONAPI
     end
 
     private
-
     # Generic error handler callback
     #
     # @param exception [Exception] instance to handle

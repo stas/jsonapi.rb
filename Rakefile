@@ -4,14 +4,6 @@ require 'rubocop/rake_task'
 require 'yaml'
 require 'yardstick'
 
-# TODO: Remove once merged...
-#       https://github.com/toshimaru/rubocop-rails_config/pull/43
-require 'rubocop'
-module RuboCop
-  Config::OBSOLETE_COPS = Config::OBSOLETE_COPS.dup
-  Config::OBSOLETE_COPS.delete('Layout/FirstParameterIndentation')
-end
-
 desc('Documentation stats and measurements')
 task('qa:docs') do
   yaml = YAML.load_file(File.expand_path('../.yardstick.yml', __FILE__))

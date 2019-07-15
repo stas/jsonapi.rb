@@ -7,7 +7,6 @@ module JSONAPI
   # Initial version from the `active_model_serializers` support for JSONAPI.
   module Deserialization
     private
-
     # Returns a transformed dictionary following [ActiveRecord::Base] specs
     #
     # @param [Hash|ActionController::Parameters] document

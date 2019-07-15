@@ -104,7 +104,6 @@ class UsersController < ActionController::Base
   end
 
   private
-
   def jsonapi_meta(resources)
     {
       many: true,
@@ -138,7 +137,6 @@ class NotesController < ActionController::Base
   end
 
   private
-
   def render_jsonapi_internal_server_error(exception)
     Rails.logger.error(exception)
     super(exception)
