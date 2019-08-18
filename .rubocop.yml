@@ -25,3 +25,9 @@ Layout/IndentationConsistency:
 
 Style/BlockDelimiters:
   Enabled: true
+
+Rails/ApplicationRecord:
+  Enabled: false
+
+Rails/BelongsTo:
+  Enabled: false
