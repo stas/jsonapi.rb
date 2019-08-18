@@ -87,7 +87,7 @@ GEM
     mini_portile2 (2.4.0)
     minitest (5.11.3)
     nio4r (2.4.0)
-    nokogiri (1.10.3)
+    nokogiri (1.10.4)
       mini_portile2 (~> 2.4.0)
     parallel (1.17.0)
     parser (2.6.3.0)
@@ -111,7 +111,7 @@ GEM
     rails-dom-testing (2.0.3)
       activesupport (>= 4.2.0)
       nokogiri (>= 1.6)
-    rails-html-sanitizer (1.0.4)
+    rails-html-sanitizer (1.2.0)
       loofah (~> 2.2, >= 2.2.2)
     railties (5.2.3)
       actionpack (= 5.2.3)
@@ -120,7 +120,7 @@ GEM
       rake (>= 0.8.7)
       thor (>= 0.19.0, < 2.0)
     rainbow (3.0.0)
-    rake (12.3.2)
+    rake (12.3.3)
     ransack (2.1.1)
       actionpack (>= 5.0)
       activerecord (>= 5.0)
@@ -154,11 +154,11 @@ GEM
       rainbow (>= 2.2.2, < 4.0)
       ruby-progressbar (~> 1.7)
       unicode-display_width (>= 1.4.0, < 1.7)
-    rubocop-performance (1.4.0)
+    rubocop-performance (1.4.1)
       rubocop (>= 0.71.0)
-    rubocop-rails (2.2.0)
+    rubocop-rails (2.0.1)
       rack (>= 1.1)
-      rubocop (>= 0.72.0)
+      rubocop (>= 0.70.0)
     rubocop-rails_config (0.6.2)
       railties (>= 3.0)
       rubocop (~> 0.70)
@@ -198,11 +198,12 @@ DEPENDENCIES
   ffaker
   jsonapi-rspec!
   jsonapi.rb!
-  rails
+  rails (~> 5)
   rspec (~> 3.0)
   rspec-rails
+  rubocop (= 0.71.0)
   rubocop-performance
-  rubocop-rails_config
+  rubocop-rails_config (= 0.6.2)
   simplecov
   sqlite3
   yardstick
