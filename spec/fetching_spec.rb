@@ -27,7 +27,7 @@ RSpec.describe UsersController, type: :request do
           expect(response_json['data'].size).to eq(users.size)
 
           response_json['data'].each do |item|
-            user = users.select { |u| u.id == item['id'].to_i }.first
+            user = users.detect { |u| u.id == item['id'].to_i }
             expect(item).to have_attribute('first_name')
               .with_value(user.first_name.upcase)
           end
