@@ -106,7 +106,7 @@ module JSONAPI
 
     # Checks if an object is a collection
     #
-    # Stollen from [FastJsonapi::ObjectSerializer], instance method.
+    # Stolen from [FastJsonapi::ObjectSerializer], instance method.
     #
     # @param resource [Object] to check
     # @param force_is_collection [NilClass] flag to overwrite
