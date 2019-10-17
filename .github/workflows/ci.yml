@@ -1,0 +1,34 @@
+name: CI
+
+on: [push]
+
+jobs:
+  ruby_rails_test_matrix:
+    runs-on: ubuntu-18.04
+
+    strategy:
+      matrix:
+        ruby: [2.3, 2.6]
+        rails: [4, 5, 6]
+        exclude:
+          - ruby: 2.3
+            rails: 6
+
+    steps:
+    - uses: actions/checkout@master
+
+    - name: Sets up the environment
+      uses: actions/setup-ruby@v1
+      with:
+        ruby-version: ${{ matrix.ruby }}
+
+    - name: Runs code QA and tests
+      env:
+        RAILS_VERSION: ~> ${{ matrix.rails }}
+      run: |
+        rm Gemfile.lock
+        sudo apt-get install libsqlite3-dev
+        gem install bundler -v '~> 1'
+        echo $RAILS_VERSION | grep -q '4' && export SQLITE3_VERSION='~> 1.3.6'
+        bundle
+        rake
