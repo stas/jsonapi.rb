@@ -320,7 +320,7 @@ class MyController < ActionController::Base
   def update
     model = MyModel.find(params[:id])
 
-    if model.update(jsonapi_deserialize(only: [:attr1, :rel_one]))
+    if model.update(jsonapi_deserialize(params, only: [:attr1, :rel_one]))
       render jsonapi: model
     else
       render jsonapi_errors: model.errors, status: :unprocessable_entity
