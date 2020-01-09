@@ -336,6 +336,12 @@ The `jsonapi_deserialize` helper accepts the following options:
  * `polymorphic`: will add and detect the `_type` attribute and class to the
    defined list of polymorphic relationships
 
+This functionality requires support for _inflections_. If your project uses
+`active_support` or `rails` you don't need to do anything. Alternatively, we will
+try to load a lightweight alternative to `active_support/inflector` provided
+by the `dry/inflector` gem, please make sure it's added if you want to benefit
+from this feature.
+
 ## Development
 
 After checking out the repo, run `bundle` to install dependencies.

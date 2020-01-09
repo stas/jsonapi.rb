@@ -10,11 +10,17 @@ module JSONAPI
     def jsonapi_fields
       return {} unless params[:fields].respond_to?(:each_pair)
 
-      ActiveSupport::HashWithIndifferentAccess.new.tap do |h|
-        params[:fields].each do |k, v|
-          h[k] = v.to_s.split(',').map(&:strip).compact
-        end
+      if defined?(ActiveSupport::HashWithIndifferentAccess)
+        extracted = ActiveSupport::HashWithIndifferentAccess.new
+      else
+        extracted = Hash.new
       end
+
+      params[:fields].each do |k, v|
+        extracted[k] = v.to_s.split(',').map(&:strip).compact
+      end
+
+      extracted
     end
 
     # Extracts and whitelists allowed includes

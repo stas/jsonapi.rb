@@ -1,5 +1,4 @@
 require 'rack/utils'
-require 'active_support/concern'
 
 module JSONAPI
   # Helpers to handle some error responses
@@ -7,15 +6,26 @@ module JSONAPI
   # Most of the exceptions are handled in Rails by [ActionDispatch] middleware
   # See: https://api.rubyonrails.org/classes/ActionDispatch/ExceptionWrapper.html
   module Errors
-    extend ActiveSupport::Concern
+    # Callback will register the error handlers
+    #
+    # @return [Module]
+    def self.included(base)
+      base.class_eval do
+        rescue_from(
+          StandardError,
+          with: :render_jsonapi_internal_server_error
+        )
 
-    included do
-      rescue_from StandardError, with: :render_jsonapi_internal_server_error
-      rescue_from ActiveRecord::RecordNotFound, with: :render_jsonapi_not_found
-      rescue_from(
-        ActionController::ParameterMissing,
-        with: :render_jsonapi_unprocessable_entity
-      )
+        rescue_from(
+          ActiveRecord::RecordNotFound,
+          with: :render_jsonapi_not_found
+        ) if defined?(ActiveRecord::RecordNotFound)
+
+        rescue_from(
+          ActionController::ParameterMissing,
+          with: :render_jsonapi_unprocessable_entity
+        ) if defined?(ActionController::ParameterMissing)
+      end
     end
 
     private
