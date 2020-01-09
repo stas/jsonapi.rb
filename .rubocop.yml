@@ -17,7 +17,7 @@ Style/StringLiterals:
 Style/FrozenStringLiteralComment:
   Enabled: false
 
-Metrics/LineLength:
+Layout/LineLength:
   Max: 80
 
 Layout/IndentationConsistency:
@@ -30,4 +30,7 @@ Rails/ApplicationRecord:
   Enabled: false
 
 Rails/BelongsTo:
+  Enabled: false
+
+Rails/ApplicationController:
   Enabled: false
