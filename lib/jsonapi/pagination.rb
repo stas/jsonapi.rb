@@ -17,8 +17,7 @@ module JSONAPI
         resources = resources.offset(offset).limit(limit)
       else
         original_size = resources.size
-        resources = resources[(offset)..(offset + limit - 1)]
-        resources ||= []
+        resources = resources[(offset)..(offset + limit - 1)] || []
 
         # Cache the original resources size to be used for pagination meta
         resources.instance_variable_set(:@original_size, original_size)
