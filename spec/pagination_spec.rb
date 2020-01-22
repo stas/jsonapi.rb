@@ -142,6 +142,57 @@ RSpec.describe UsersController, type: :request do
           end
         end
 
+        context 'on paging beyond the last page' do
+          let(:as_list) { }
+          let(:params) do
+            {
+              page: { number: 5, size: 1 },
+              as_list: as_list
+            }.reject { |_k, _v| _v.blank? }
+          end
+
+          context 'on an array of resources' do
+            let(:as_list) { true }
+
+            it do
+              expect(response).to have_http_status(:ok)
+              expect(response_json['data'].size).to eq(0)
+
+              expect(response_json['meta']['pagination']).to eq(
+                'current' => 5,
+                'first' => 1,
+                'prev' => 4
+              )
+            end
+          end
+
+          it do
+            expect(response).to have_http_status(:ok)
+            expect(response_json['data'].size).to eq(0)
+
+            expect(response_json['meta']['pagination']).to eq(
+              'current' => 5,
+              'first' => 1,
+              'prev' => 4
+            )
+
+            expect(response_json).to have_link(:self)
+            expect(response_json).to have_link(:prev)
+            expect(response_json).to have_link(:first)
+            expect(response_json).not_to have_link(:next)
+            expect(response_json).not_to have_link(:last)
+
+            expect(URI.parse(response_json['links']['self']).query)
+              .to eq(CGI.unescape(params.to_query))
+
+            qry = CGI.unescape(params.deep_merge(page: { number: 4 }).to_query)
+            expect(URI.parse(response_json['links']['prev']).query).to eq(qry)
+
+            qry = CGI.unescape(params.deep_merge(page: { number: 1 }).to_query)
+            expect(URI.parse(response_json['links']['first']).query).to eq(qry)
+          end
+        end
+
         context 'on page 1 out of 3' do
           let(:params) do
             {
