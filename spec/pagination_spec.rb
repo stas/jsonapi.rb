@@ -45,21 +45,32 @@ RSpec.describe UsersController, type: :request do
             .to eq(CGI.unescape(params.to_query))
         end
 
-        context 'even when it is an array' do
-          let(:params) { { sort: '-created_at', as_list: true } }
-
-          it do
-            expect(response).to have_http_status(:ok)
-            expect(response_json['data'].size).to eq(3)
-          end
-        end
-
         context 'on page 2 out of 3' do
+          let(:as_list) { }
           let(:params) do
             {
               page: { number: 2, size: 1 },
-              sort: '-created_at'
-            }
+              sort: '-created_at',
+              as_list: as_list
+            }.reject { |_k, _v| _v.blank? }
+          end
+
+          context 'on an array of resources' do
+            let(:as_list) { true }
+
+            it do
+              expect(response).to have_http_status(:ok)
+              expect(response_json['data'].size).to eq(1)
+              expect(response_json['data'][0]).to have_id(second_user.id.to_s)
+
+              expect(response_json['meta']['pagination']).to eq(
+                'current' => 2,
+                'first' => 1,
+                'prev' => 1,
+                'next' => 3,
+                'last' => 3
+              )
+            end
           end
 
           it do
