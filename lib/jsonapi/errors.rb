@@ -14,7 +14,7 @@ module JSONAPI
         rescue_from(
           StandardError,
           with: :render_jsonapi_internal_server_error
-        )
+        ) unless defined?(::Rails) && ::Rails.env.test?
 
         rescue_from(
           ActiveRecord::RecordNotFound,
