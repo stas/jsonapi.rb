@@ -30,14 +30,10 @@ module JSONAPI
     #
     # @return [Array]
     def jsonapi_pagination(resources)
-      links = { self: request.base_url + request.original_fullpath }
+      links = { self: request.base_url + original_fullpath }
       pagination = jsonapi_pagination_meta(resources)
 
       return links if pagination.blank?
-
-      original_params = params.except(
-        *request.path_parameters.keys.map(&:to_s)
-      ).to_unsafe_h.with_indifferent_access
 
       original_params[:page] ||= {}
       original_url = request.base_url + request.path + '?'
@@ -97,6 +93,26 @@ module JSONAPI
       num = [1, pagination[:number].to_f.to_i].max
 
       [(num - 1) * per_page, per_page, num]
+    end
+
+    def original_fullpath
+      return request.original_fullpath if defined? request.original_fullpath
+    
+      env.fetch('ORIGINAL_FULLPATH', request.fullpath)
+    end
+
+    def original_params
+      if defined? request.path_parameters
+        _params = params.except(*request.path_parameters.keys.map(&:to_s))
+      else
+        _params = env.fetch('rack.request.query_hash')
+      end
+        
+      if defined? _params.to_unsafe_h
+        _params = _params.to_unsafe_h
+      end
+      
+      _params.with_indifferent_access
     end
   end
 end
