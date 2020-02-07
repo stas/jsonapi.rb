@@ -30,13 +30,13 @@ module JSONAPI
     #
     # @return [Array]
     def jsonapi_pagination(resources)
-      links = { self: request.base_url + request.original_fullpath }
+      links = { self: request.base_url + request.fullpath }
       pagination = jsonapi_pagination_meta(resources)
 
       return links if pagination.blank?
 
       original_params = params.except(
-        *request.path_parameters.keys.map(&:to_s)
+        *jsonapi_path_parameters.keys.map(&:to_s)
       ).to_unsafe_h.with_indifferent_access
 
       original_params[:page] = original_params[:page].dup || {}
@@ -97,6 +97,15 @@ module JSONAPI
       num = [1, pagination[:number].to_f.to_i].max
 
       [(num - 1) * per_page, per_page, num]
+    end
+
+    # Fallback to Rack's parsed query string when Rails is not available
+    #
+    # @return [Hash]
+    def jsonapi_path_parameters
+      return request.path_parameters if request.respond_to?(:path_parameters)
+
+      request.send(:parse_query, request.query_string, '&;')
     end
   end
 end
