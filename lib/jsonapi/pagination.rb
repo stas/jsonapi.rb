@@ -82,6 +82,8 @@ module JSONAPI
         numbers[:last] = last_page
       end
 
+      numbers[:total] = total
+
       numbers
     end
 
