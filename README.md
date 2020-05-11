@@ -290,6 +290,7 @@ class MyController < ActionController::Base
       render jsonapi: paginated
     end
   end
+
 end
 ```
 
@@ -305,6 +306,15 @@ use the `jsonapi_pagination_meta` method:
     { pagination: pagination } if pagination.present?
   end
 
+```
+
+If you want to change the default number of items per page, use the
+`jsonapi_page_size` method:
+
+```ruby
+  def jsonapi_page_size
+    30
+  end
 ```
 ### Deserialization
 
