@@ -42,7 +42,7 @@ module JSONAPI
       original_params[:page] = original_params[:page].dup || {}
       original_url = request.base_url + request.path + '?'
 
-      pagination.each do |page_name, number|
+      pagination.delete_if{ |k, _v| k == :records }.each do |page_name, number|
         original_params[:page][:number] = number
         links[page_name] = original_url + CGI.unescape(
           original_params.to_query
