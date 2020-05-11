@@ -97,7 +97,7 @@ module JSONAPI
 
       pagination = params[:page].try(:slice, :number, :size) || {}
       per_page = pagination[:size].to_f.to_i
-      per_page = def_per_page if per_page > def_per_page || per_page < 1
+      per_page = def_per_page if per_page < 1
       num = [1, pagination[:number].to_f.to_i].max
 
       [(num - 1) * per_page, per_page, num]
