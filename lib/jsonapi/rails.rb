@@ -43,7 +43,7 @@ module JSONAPI
         resource = [resource] unless many
 
         return JSONAPI::ErrorSerializer.new(resource, options)
-          .serialized_json unless resource.is_a?(ActiveModel::Errors)
+          .serializable_hash.to_json unless resource.is_a?(ActiveModel::Errors)
 
         errors = []
         model = resource.instance_variable_get('@base')
@@ -68,7 +68,7 @@ module JSONAPI
 
         JSONAPI::ActiveModelErrorSerializer.new(
           errors, params: { model: model, model_serializer: model_serializer }
-        ).serialized_json
+        ).serializable_hash.to_json
       end
     end
 
@@ -100,7 +100,7 @@ module JSONAPI
           serializer_class = JSONAPI::Rails.serializer_class(resource, many)
         end
 
-        serializer_class.new(resource, options).serialized_json
+        serializer_class.new(resource, options).serializable_hash.to_json
       end
     end
 
