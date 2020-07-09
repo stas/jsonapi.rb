@@ -24,7 +24,11 @@ RuboCop::RakeTask.new('qa:code') do |task|
 end
 
 desc('Run CI QA tasks')
-task(qa: ['qa:docs', 'qa:code'])
+if ENV['RAILS_VERSION'].to_s.include?('4')
+  task(qa: ['qa:docs'])
+else
+  task(qa: ['qa:docs', 'qa:code'])
+end
 
 RSpec::Core::RakeTask.new(spec: :qa)
 task(default: :spec)
