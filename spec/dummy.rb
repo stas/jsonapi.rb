@@ -40,7 +40,7 @@ class Note < ActiveRecord::Base
 end
 
 class CustomNoteSerializer
-  include FastJsonapi::ObjectSerializer
+  include JSONAPI::Serializer
 
   set_type :note
   belongs_to :user
@@ -48,7 +48,7 @@ class CustomNoteSerializer
 end
 
 class UserSerializer
-  include FastJsonapi::ObjectSerializer
+  include JSONAPI::Serializer
 
   has_many :notes, serializer: CustomNoteSerializer
   attributes(:last_name, :created_at, :updated_at)

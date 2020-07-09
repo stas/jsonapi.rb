@@ -31,7 +31,7 @@ Main goals:
 
 The available features include:
 
- * object serialization (powered by Fast JSON API)
+ * object serialization (powered by JSON:API Serializer, was `fast_jsonapi`)
  * [error handling](https://jsonapi.org/format/#errors) (parameters,
    validation, generic errors)
  * fetching of the data (support for
@@ -44,7 +44,7 @@ The available features include:
 
 ## But how?
 
-Mainly by leveraging [Fast JSON API](https://github.com/Netflix/fast_jsonapi)
+Mainly by leveraging [JSON:API Serializer](https://github.com/jsonapi-serializer/jsonapi-serializer)
 and [Ransack](https://github.com/activerecord-hackery/ransack).
 
 Thanks to everyone who worked on these amazing projects!
@@ -100,7 +100,7 @@ The naming scheme follows the `ModuleName::ClassNameSerializer` for an instance
 of the `ModuleName::ClassName`.
 
 Please follow the
-[Fast JSON API guide](https://github.com/Netflix/fast_jsonapi#serializer-definition)
+[JSON:API Serializer guide](https://github.com/jsonapi-serializer/jsonapi-serializer#serializer-definition)
 on how to define a serializer.
 
 To provide a different naming scheme implement the `jsonapi_serializer_class`

@@ -1,9 +1,9 @@
-require 'fast_jsonapi'
+require 'jsonapi/serializer'
 
 module JSONAPI
   # A simple error serializer
   class ErrorSerializer
-    include FastJsonapi::ObjectSerializer
+    include JSONAPI::Serializer
 
     set_id :object_id
     set_type :error
