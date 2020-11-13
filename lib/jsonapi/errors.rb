@@ -34,6 +34,7 @@ module JSONAPI
     # @param exception [Exception] instance to handle
     # @return [String] JSONAPI error response
     def render_jsonapi_internal_server_error(exception)
+      log_error(exception)
       error = { status: '500', title: Rack::Utils::HTTP_STATUS_CODES[500] }
       render jsonapi_errors: [error], status: :internal_server_error
     end
@@ -65,6 +66,20 @@ module JSONAPI
       }
 
       render jsonapi_errors: [error], status: :unprocessable_entity
+    end
+
+    # Method to facilitate error logging
+    #
+    # @param exception [Exception] instance to handle
+    # @return [Boolean] Always returns true
+    def log_error(exception)
+      logger = defined?(::Rails) && ::Rails.logger
+      return unless logger
+
+      message = +"\n#{exception.class} (#{exception.message}):\n"
+      message << exception.annotated_source_code.to_s if exception.respond_to?(:annotated_source_code)
+      message << "  " << exception.backtrace.join("\n  ")
+      logger.fatal("#{message}\n\n")
     end
   end
 end
