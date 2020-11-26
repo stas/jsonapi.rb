@@ -4,11 +4,20 @@ inherit_gem:
 
 require: rubocop-performance
 
+AllCops:
+  NewCops: enable
+
 Performance:
   Enabled: true
 
 Rails:
   Enabled: true
+
+Rails/Pluck:
+  Enabled: false
+
+Rails/NegateInclude:
+  Enabled: false
 
 Style/StringLiterals:
   Enabled: true

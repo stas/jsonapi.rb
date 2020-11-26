@@ -34,7 +34,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'jsonapi-rspec'
   spec.add_development_dependency 'yardstick'
   spec.add_development_dependency 'rubocop-rails_config'
-  spec.add_development_dependency 'rubocop'
+  spec.add_development_dependency 'rubocop', ENV['RUBOCOP_VERSION']
   spec.add_development_dependency 'simplecov'
   spec.add_development_dependency 'rubocop-performance'
 end
