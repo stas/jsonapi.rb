@@ -3,9 +3,6 @@ require 'jsonapi/error_serializer'
 module JSONAPI
   # [ActiveModel::Errors] serializer
   class ActiveModelErrorSerializer < ErrorSerializer
-    set_id :object_id
-    set_type :error
-
     attribute :status do
       '422'
     end
