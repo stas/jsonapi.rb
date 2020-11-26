@@ -16,12 +16,11 @@ Gem::Specification.new do |spec|
   spec.homepage      = 'https://github.com/stas/jsonapi.rb'
   spec.license       = 'MIT'
 
-  spec.files         = Dir.chdir(File.expand_path('..', __FILE__)) do
-    `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(spec)/}) }
-  end
+  spec.files         = Dir.glob('{lib,spec}/**/*', File::FNM_DOTMATCH)
+  spec.files        += %w(LICENSE.txt README.md)
   spec.require_paths = ['lib']
 
-  spec.add_dependency 'jsonapi-serializer', '~> 2.0'
+  spec.add_dependency 'jsonapi-serializer'
   spec.add_dependency 'ransack'
   spec.add_dependency 'rack'
 
