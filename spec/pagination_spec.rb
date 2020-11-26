@@ -17,7 +17,13 @@ RSpec.describe UsersController, type: :request do
     it do
       expect(response_json['data'].size).to eq(0)
       expect(response_json['meta'])
-        .to eq('many' => true, 'pagination' => { 'current' => 1 })
+        .to eq(
+          'many' => true,
+          'pagination' => {
+            'current' => 1,
+            'records' => 0
+          }
+        )
     end
 
     context 'with users' do
@@ -68,7 +74,8 @@ RSpec.describe UsersController, type: :request do
                 'first' => 1,
                 'prev' => 1,
                 'next' => 3,
-                'last' => 3
+                'last' => 3,
+                'records' => 3
               )
             end
           end
@@ -83,7 +90,8 @@ RSpec.describe UsersController, type: :request do
               'first' => 1,
               'prev' => 1,
               'next' => 3,
-              'last' => 3
+              'last' => 3,
+              'records' => 3
             )
 
             expect(response_json).to have_link(:self)
@@ -122,7 +130,8 @@ RSpec.describe UsersController, type: :request do
             expect(response_json['meta']['pagination']).to eq(
               'current' => 3,
               'first' => 1,
-              'prev' => 2
+              'prev' => 2,
+              'records' => 3
             )
 
             expect(response_json).to have_link(:self)
@@ -161,7 +170,8 @@ RSpec.describe UsersController, type: :request do
               expect(response_json['meta']['pagination']).to eq(
                 'current' => 5,
                 'first' => 1,
-                'prev' => 4
+                'prev' => 4,
+                'records' => 3
               )
             end
           end
@@ -173,7 +183,8 @@ RSpec.describe UsersController, type: :request do
             expect(response_json['meta']['pagination']).to eq(
               'current' => 5,
               'first' => 1,
-              'prev' => 4
+              'prev' => 4,
+              'records' => 3
             )
 
             expect(response_json).to have_link(:self)
@@ -209,7 +220,8 @@ RSpec.describe UsersController, type: :request do
             expect(response_json['meta']['pagination']).to eq(
               'current' => 1,
               'next' => 2,
-              'last' => 3
+              'last' => 3,
+              'records' => 3
             )
 
             expect(response_json).not_to have_link(:prev)

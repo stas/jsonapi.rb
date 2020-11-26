@@ -82,6 +82,10 @@ module JSONAPI
         numbers[:last] = last_page
       end
 
+      if total.present?
+        numbers[:records] = total
+      end
+
       numbers
     end
 
