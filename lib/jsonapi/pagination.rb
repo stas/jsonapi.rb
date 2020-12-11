@@ -42,7 +42,9 @@ module JSONAPI
       original_params[:page] = original_params[:page].dup || {}
       original_url = request.base_url + request.path + '?'
 
-      pagination.delete_if{ |k, _v| k == :records }.each do |page_name, number|
+      pagination.each do |page_name, number|
+        next if page_name == :records
+
         original_params[:page][:number] = number
         links[page_name] = original_url + CGI.unescape(
           original_params.to_query
@@ -93,7 +95,6 @@ module JSONAPI
     #
     # @return [Array] with the offset, limit and the current page number
     def jsonapi_pagination_params
-
       pagination = params[:page].try(:slice, :number, :size) || {}
       per_page = pagination[:size].to_f.to_i
       per_page = jsonapi_page_size if per_page < 1
