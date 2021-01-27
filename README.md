@@ -316,6 +316,17 @@ If you want to change the default number of items per page, use the
     30
   end
 ```
+
+If you want to increase the maximum items per page to more than 30 (default) you have to set the constant `JSONAPI_PAGE_SIZE` in your controller:
+
+```ruby
+class MyController < ActionController::Base
+  include JSONAPI::Pagination
+
+  JSONAPI_PAGE_SIZE = 50
+end
+```
+
 ### Deserialization
 
 `JSONAPI::Deserialization` provides a helper to transform a `JSONAPI` document
