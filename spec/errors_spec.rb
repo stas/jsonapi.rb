@@ -56,8 +56,13 @@ RSpec.describe NotesController, type: :request do
           .to eq(Rack::Utils::HTTP_STATUS_CODES[422])
         expect(response_json['errors'][0]['source'])
           .to eq('pointer' => '/data/relationships/user')
-        expect(response_json['errors'][0]['detail'])
-          .to eq('User can\'t be blank')
+        if Rails::VERSION::MAJOR >= 6 && Rails::VERSION::MINOR >= 1
+          expect(response_json['errors'][0]['detail'])
+            .to eq('User must exist')
+        else
+          expect(response_json['errors'][0]['detail'])
+            .to eq('User can\'t be blank')
+        end
       end
 
       context 'required by validations' do
