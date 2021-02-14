@@ -8,7 +8,7 @@ jobs:
 
     strategy:
       matrix:
-        ruby: [2.4, 2.7]
+        ruby: [2.4, 2.7, '3.0']
         rails: ['5', '6.0', '6']
         exclude:
           - ruby: 2.4
