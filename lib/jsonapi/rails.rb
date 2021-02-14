@@ -55,8 +55,18 @@ module JSONAPI
           model_serializer = JSONAPI::Rails.serializer_class(model, false)
         end
 
-        details = resource.messages
-        details = resource.details if resource.respond_to?(:details)
+        details = {}
+        if ::Rails::VERSION::MAJOR >= 6 && ::Rails::VERSION::MINOR >= 1
+          resource.map do |error|
+            attr = error.attribute
+            details[attr] ||= []
+            details[attr] << error.detail.merge(message: error.message)
+          end
+        elsif resource.respond_to?(:details)
+          details = resource.details
+        else
+          details = resource.messages
+        end
 
         details.each do |error_key, error_hashes|
           error_hashes.each do |error_hash|
