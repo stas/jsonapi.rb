@@ -96,7 +96,7 @@ module JSONAPI
     # @return [Array] with the offset, limit and the current page number
     def jsonapi_pagination_params
       pagination = params[:page].try(:slice, :number, :size) || {}
-      per_page = jsonapi_page_size(pagination[:size].to_i.to_f)
+      per_page = jsonapi_page_size(pagination)
       num = [1, pagination[:number].to_f.to_i].max
 
       [(num - 1) * per_page, per_page, num]
@@ -104,13 +104,17 @@ module JSONAPI
 
     # Retrieves the default page size
     #
-    # @param per_page_param [Integer] per Page extracted from parmas hash
+    # @param per_page_param [Hash] Page size extracted from parmas hash
     #
     # @return [Integer]
-    def jsonapi_page_size(per_page_param)
-      per_page_param < 1 ?
-        self.class.const_get(:JSONAPI_PAGE_SIZE).to_i :
-        per_page_param
+    def jsonapi_page_size(pagination_params)
+      per_page = pagination_params[:size].to_f.to_i
+
+      return self.class
+              .const_get(:JSONAPI_PAGE_SIZE)
+              .to_i if per_page < 1
+
+      per_page
     end
 
     # Fallback to Rack's parsed query string when Rails is not available
