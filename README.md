@@ -308,7 +308,7 @@ use the `jsonapi_pagination_meta` method:
 
 ```
 
-If you want to change the default number of items per page, or define a custom logic to handle page size, use the
+If you want to change the default number of items per page or define a custom logic to handle page size, use the
 `jsonapi_page_size` method:
 
 ```ruby
