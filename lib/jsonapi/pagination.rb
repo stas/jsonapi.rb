@@ -104,7 +104,9 @@ module JSONAPI
 
     # Retrieves the default page size
     #
-    # @param per_page_param [Hash] Page size extracted from parmas hash
+    # @param per_page_param [Hash] opts the paginations params
+    # @option opts [String] :number the page number requested
+    # @option opts [String] :size the page size requested
     #
     # @return [Integer]
     def jsonapi_page_size(pagination_params)

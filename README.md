@@ -308,12 +308,14 @@ use the `jsonapi_pagination_meta` method:
 
 ```
 
-If you want to change the default number of items per page, use the
+If you want to change the default number of items per page, or define a custom logic to handle page size, use the
 `jsonapi_page_size` method:
 
 ```ruby
-  def jsonapi_page_size
-    30
+  def jsonapi_page_size(pagination_params)
+    per_page = pagination_params[:size].to_f.to_i
+    per_page = 30 if per_page > 30
+    per_page
   end
 ```
 ### Deserialization
