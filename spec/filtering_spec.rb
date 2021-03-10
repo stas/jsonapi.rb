@@ -12,7 +12,7 @@ RSpec.describe UsersController, type: :request do
       end
     end
 
-    context 'attributes with underscore in name' do
+    context 'handle attributes with underscore in name' do
       it 'detect _' do
         attributes, predicates = JSONAPI::Filtering
           .extract_attributes_and_predicates('notes_count_eq')
@@ -101,6 +101,13 @@ RSpec.describe UsersController, type: :request do
           {
             filter: { notes_count_eq: 1 }
           }
+        end
+
+        it 'ensures ransack scopes work properly' do
+          ransack = User.ransack(notes_count_eq: 1)
+          expected_sql = 'SELECT "users".* FROM "users" WHERE '\
+                         '"users"."notes_count" = 1'
+          expect(ransack.result.to_sql).to eq(expected_sql)
         end
 
         it do
