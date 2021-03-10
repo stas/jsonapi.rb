@@ -88,12 +88,17 @@ class UsersController < ActionController::Base
   def index
     allowed_fields = [
       :first_name, :last_name, :created_at,
-      :notes_created_at, :notes_quantity,
+      :notes_created_at, :notes_quantity
+    ]
+    allowed_scopes = [
       :created_before
     ]
     options = { sort_with_expressions: true }
 
-    jsonapi_filter(User.all, allowed_fields, options) do |filtered|
+    jsonapi_filter(User.all,
+                   allowed_fields,
+                   allowed_scopes,
+                   options) do |filtered|
       result = filtered.result
 
       if params[:sort].to_s.include?('notes_quantity')
