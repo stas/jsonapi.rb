@@ -85,6 +85,25 @@ RSpec.describe UsersController, type: :request do
         end
       end
 
+      context 'returns users by counter_cache' do
+        let(:params) do
+          second_user.update(notes_count: 1)
+          {
+            filter: { notes_count_eq: 1 }
+          }
+        end
+
+        fit do
+          expect(first_user.notes_count).to eq(0)
+          expect(second_user.notes_count).to eq(1)
+          expect(third_user.notes_count).to eq(0)
+
+          expect(response).to have_http_status(:ok)
+          expect(response_json['data'].size).to eq(1)
+          expect(response_json['data'][0]).to have_id(second_user.id.to_s)
+        end
+      end
+
       context 'returns sorted users by notes' do
         let(:params) do
           { sort: '-notes_created_at' }
