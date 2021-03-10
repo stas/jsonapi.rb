@@ -114,7 +114,6 @@ RSpec.describe UsersController, type: :request do
         end
 
         fit 'should return only' do
-          binding.pry
           expect(response).to have_http_status(:ok)
           expect(response_json['data'].size).to eq(1)
           expect(response_json['data'][0]).to have_id(third_user.id.to_s)
