@@ -12,6 +12,16 @@ RSpec.describe UsersController, type: :request do
       end
     end
 
+    context 'attributes with underscore in name' do
+      it 'detect _' do
+        attributes, predicates = JSONAPI::Filtering
+          .extract_attributes_and_predicates('notes_count_eq')
+        expect(attributes).to eq(['notes_count'])
+        expect(predicates.size).to eq(1)
+        expect(predicates[0].name).to eq('eq')
+      end
+    end
+
     context 'mixed predicates' do
       it 'extracts in order' do
         attributes, predicates = JSONAPI::Filtering
@@ -93,7 +103,7 @@ RSpec.describe UsersController, type: :request do
           }
         end
 
-        fit do
+        it do
           expect(first_user.notes_count).to eq(0)
           expect(second_user.notes_count).to eq(1)
           expect(third_user.notes_count).to eq(0)
