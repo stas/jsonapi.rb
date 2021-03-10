@@ -8,16 +8,19 @@ module JSONAPI
     #
     # @param requested_field [String] the field to parse
     # @return [Array] with the fields and the predicate
-    def self.extract_attributes_and_predicates(requested_field)
+    def self.extract_attributes_and_predicates(requested_field, allowed_fields)
       predicates = []
       field_name = requested_field.to_s.dup
 
       while Ransack::Predicate.detect_from_string(field_name).present? do
+        # break if we have an exect match with an allowed_fields
+        # we do not want to pick apart the string further
+        break if allowed_fields.include?(field_name)
+
         predicate = Ransack::Predicate
           .detect_and_strip_from_string!(field_name)
         predicates << Ransack::Predicate.named(predicate)
       end
-
       [field_name.split(/_and_|_or_/), predicates.reverse]
     end
 
@@ -54,7 +57,7 @@ module JSONAPI
 
       requested.each_pair do |requested_field, to_filter|
         field_names, predicates = JSONAPI::Filtering
-          .extract_attributes_and_predicates(requested_field)
+          .extract_attributes_and_predicates(requested_field, allowed_fields)
 
         wants_array = predicates.any? && predicates.map(&:wants_array).any?
 
@@ -88,7 +91,7 @@ module JSONAPI
         end
 
         field_names, predicates = JSONAPI::Filtering
-          .extract_attributes_and_predicates(requested_field)
+          .extract_attributes_and_predicates(requested_field, allowed_fields)
 
         next unless (field_names - allowed_fields).empty?
         next if !options[:sort_with_expressions] && predicates.any?
