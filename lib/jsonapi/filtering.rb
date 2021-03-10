@@ -35,9 +35,11 @@ module JSONAPI
     # @param allowed_fields [Array] a list of allowed fields to be filtered
     # @param options [Hash] extra flags to enable/disable features
     # @return [ActiveRecord::Base] a collection of resources
-    def jsonapi_filter(resources, allowed_fields, options = {})
+    def jsonapi_filter(resources, allowed_fields, *allowed_scopes, options)
+      options = options || {}
+      allowed_scopes = (allowed_scopes || []).flatten.map(&:to_s)
       allowed_fields = allowed_fields.map(&:to_s)
-      extracted_params = jsonapi_filter_params(allowed_fields)
+      extracted_params = jsonapi_filter_params(allowed_fields, allowed_scopes)
       extracted_params[:sorts] = jsonapi_sort_params(allowed_fields, options)
       resources = resources.ransack(extracted_params)
       block_given? ? yield(resources) : resources
@@ -50,7 +52,7 @@ module JSONAPI
     #
     # @param allowed_fields [Array] a list of allowed fields to be filtered
     # @return [Hash] to be passed to [ActiveRecord::Base#order]
-    def jsonapi_filter_params(allowed_fields)
+    def jsonapi_filter_params(allowed_fields, allowed_scopes)
       filtered = {}
       requested = params[:filter] || {}
       allowed_fields = allowed_fields.map(&:to_s)
@@ -65,6 +67,20 @@ module JSONAPI
           to_filter = to_filter.split(',')
         end
 
+        # filter by scopes expects an exact match
+        # with the `allowed_scopes`. Predicates can be a part of named scopes
+        # and should be handled first
+        # Make sure to move to the next after a match
+        # {"created_before"=>"2013-02-01"}
+        # {"created_before_gt"=>"2013-02-01"}
+        if allowed_scopes.include?(requested_field)
+          filtered[requested_field] = to_filter
+          next
+        end
+
+
+        # filter by attributes
+        # {"first_name_eq"=>"Beau"}
         if predicates.any? && (field_names - allowed_fields).empty?
           filtered[requested_field] = to_filter
         end

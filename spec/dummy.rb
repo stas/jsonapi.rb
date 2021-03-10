@@ -32,6 +32,11 @@ end
 
 class User < ActiveRecord::Base
   has_many :notes
+  scope :created_before, ->(date) { where('created_at < ?', date) }
+
+  def self.ransackable_scopes(auth_object = nil)
+    %i(created_before)
+  end
 end
 
 class Note < ActiveRecord::Base
@@ -87,9 +92,15 @@ class UsersController < ActionController::Base
       :notes_created_at, :notes_quantity,
       :notes_count
     ]
+    allowed_scopes = [
+      :created_before
+    ]
     options = { sort_with_expressions: true }
 
-    jsonapi_filter(User.all, allowed_fields, options) do |filtered|
+    jsonapi_filter(User.all,
+                   allowed_fields,
+                   allowed_scopes,
+                   options) do |filtered|
       result = filtered.result
 
       if params[:sort].to_s.include?('notes_quantity')
