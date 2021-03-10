@@ -84,7 +84,8 @@ class UsersController < ActionController::Base
   def index
     allowed_fields = [
       :first_name, :last_name, :created_at,
-      :notes_created_at, :notes_quantity
+      :notes_created_at, :notes_quantity,
+      :notes_count
     ]
     options = { sort_with_expressions: true }
 
