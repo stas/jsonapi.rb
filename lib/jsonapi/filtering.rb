@@ -64,15 +64,21 @@ module JSONAPI
           to_filter = to_filter.split(',')
         end
 
+        # filter by scopes expects an exact match
+        # with the `allowed_scopes`. Predicates can be a part of named scopes
+        # and should be handled first
+        # Make sure to move to the next after a match
+        # {"created_before"=>"2013-02-01"}
+        # {"created_before_gt"=>"2013-02-01"}
+        if allowed_scopes.include?(requested_field)
+          filtered[requested_field] = to_filter
+          next
+        end
+
+
         # filter by attributes
         # {"first_name_eq"=>"Beau"}
         if predicates.any? && (field_names - allowed_fields).empty?
-          filtered[requested_field] = to_filter
-        end
-
-        # filter by scopes
-        # {"created_before"=>"2013-02-01"}
-        if (field_names - allowed_scopes).empty?
           filtered[requested_field] = to_filter
         end
       end
