@@ -52,7 +52,7 @@ module JSONAPI
       elsif error_key == :base
         { pointer: "/data" }
       else
-        { pointer: '' }
+        { pointer: nil }
       end
     end
   end
