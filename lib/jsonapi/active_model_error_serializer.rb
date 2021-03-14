@@ -49,6 +49,8 @@ module JSONAPI
         { pointer: "/data/attributes/#{error_key}" }
       elsif rels.include?(error_key)
         { pointer: "/data/relationships/#{error_key}" }
+      elsif error_key == :base
+        { pointer: "/data" }
       else
         { pointer: '' }
       end

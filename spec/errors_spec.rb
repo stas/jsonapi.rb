@@ -133,6 +133,27 @@ RSpec.describe NotesController, type: :request do
             .to eq('pointer' => '/data/attributes/title')
         end
       end
+
+      context 'with a validation error on the class' do
+        let(:params) do
+          payload = note_params.dup
+          payload[:data][:attributes][:title] = 'n/a'
+          payload
+        end
+
+        it do
+          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response_json['errors'].size).to eq(1)
+          expect(response_json['errors'][0]['status']).to eq('422')
+          expect(response_json['errors'][0]['code']).to include('invalid')
+          expect(response_json['errors'][0]['title'])
+            .to eq(Rack::Utils::HTTP_STATUS_CODES[422])
+          expect(response_json['errors'][0]['source'])
+              .to eq('pointer' => '/data')
+          expect(response_json['errors'][0]['detail'])
+            .to eq('is invalid')
+        end
+      end
     end
 
     context 'with a bad note ID' do

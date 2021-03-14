@@ -36,7 +36,13 @@ end
 class Note < ActiveRecord::Base
   validates_format_of :title, without: /BAD_TITLE/
   validates_numericality_of :quantity, less_than: 100, if: :quantity?
+  validate :title_check
   belongs_to :user, required: true
+
+  # Provide a validation adding an error to the model's base
+  def title_check
+    errors.add(:base, :invalid) if title == 'n/a'
+  end
 end
 
 class CustomNoteSerializer
