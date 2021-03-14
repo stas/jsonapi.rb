@@ -79,7 +79,11 @@ module JSONAPI
 
         JSONAPI::Rails.serializer_to_json(
           JSONAPI::ActiveModelErrorSerializer.new(
-            errors, params: { model: model, model_serializer: model_serializer }
+            errors, params: {
+              model:            model,
+              model_serializer: model_serializer,
+              status:           options[:status]
+            }
           )
         )
       end

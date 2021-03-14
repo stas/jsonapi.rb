@@ -3,12 +3,36 @@ require 'jsonapi/error_serializer'
 module JSONAPI
   # [ActiveModel::Errors] serializer
   class ActiveModelErrorSerializer < ErrorSerializer
-    attribute :status do
-      '422'
+    class << self
+      ##
+      # Get the status code to render for the serializer
+      #
+      # This considers an optional status provided through the serializer
+      # parameters, as either a symbol or a number.
+      #
+      # @param params [Hash]
+      #     The serializer parameters
+      #
+      # @return [Integer]
+      #     The status code to use
+      def status_code(params)
+        case params[:status]
+        when Symbol
+          Rack::Utils::SYMBOL_TO_STATUS_CODE[params[:status]]
+        when Integer
+          params[:status]
+        else
+          422
+        end
+      end
     end
 
-    attribute :title do
-      Rack::Utils::HTTP_STATUS_CODES[422]
+    attribute :status do |_, params|
+      status_code(params).to_s
+    end
+
+    attribute :title do |_, params|
+      Rack::Utils::HTTP_STATUS_CODES[status_code(params)]
     end
 
     attribute :code do |object|
@@ -28,12 +52,12 @@ module JSONAPI
         message = errors_object.generate_message(
           error_key, nil, error_hash[:error]
         )
-      elsif error_hash[:error].present?
+      elsif error_hash[:error].present? && error_hash[:error].is_a?(Symbol)
         message = errors_object.generate_message(
           error_key, error_hash[:error], error_hash
         )
       else
-        message = error_hash[:message]
+        message = error_hash[:message] || error_hash[:error]
       end
 
       errors_object.full_message(error_key, message)
@@ -49,8 +73,10 @@ module JSONAPI
         { pointer: "/data/attributes/#{error_key}" }
       elsif rels.include?(error_key)
         { pointer: "/data/relationships/#{error_key}" }
+      elsif error_key == :base
+        { pointer: '/data' }
       else
-        { pointer: '' }
+        { pointer: nil }
       end
     end
   end
