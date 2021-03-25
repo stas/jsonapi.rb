@@ -186,4 +186,41 @@ RSpec.describe NotesController, type: :request do
       end
     end
   end
+
+  describe 'DELETE /nodes/:id' do
+    let(:note)    { create_note }
+    let(:note_id) { note.id }
+    let(:user)    { note.user }
+    let(:user_id) { user.id }
+
+    context 'with a random note' do
+      before { delete(note_path(note_id), headers: jsonapi_headers) }
+
+      it { expect(response).to have_http_status(:no_content) }
+    end
+
+    context 'with a lovely note' do
+      let(:errors) do
+        {
+          'errors' => [
+            {
+              'code'   => 'cant_delete_lovely_notes',
+              'detail' => "Can't delete lovely notes",
+              'source' => { 'pointer' => '/data' },
+              'status' => '409',
+              'title'  => 'Conflict'
+            }
+          ]
+        }
+      end
+
+      before do
+        note.update(title: 'Lovely')
+        delete(note_path(note_id), headers: jsonapi_headers)
+      end
+
+      it { expect(response).to have_http_status(:conflict) }
+      it { expect(response_json).to match(errors) }
+    end
+  end
 end

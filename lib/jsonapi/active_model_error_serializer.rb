@@ -3,12 +3,34 @@ require 'jsonapi/error_serializer'
 module JSONAPI
   # [ActiveModel::Errors] serializer
   class ActiveModelErrorSerializer < ErrorSerializer
-    attribute :status do
-      '422'
+    class << self
+      ##
+      # Get the status code to render for the serializer, considering an eventual
+      # status provided through the serializer parameters
+      #
+      # @param params [Hash]
+      #     The serializer parameters
+      #
+      # @return [Integer]
+      #     The status code to use
+      def status_code(params)
+        case params[:status]
+        when Symbol
+          Rack::Utils::SYMBOL_TO_STATUS_CODE[params[:status]]
+        when Integer
+          params[:status]
+        else
+          422
+        end
+      end
     end
 
-    attribute :title do
-      Rack::Utils::HTTP_STATUS_CODES[422]
+    attribute :status do |_, params|
+      status_code(params).to_s
+    end
+
+    attribute :title do |_, params|
+      Rack::Utils::HTTP_STATUS_CODES[status_code(params)]
     end
 
     attribute :code do |object|
