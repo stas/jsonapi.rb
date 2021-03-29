@@ -43,7 +43,10 @@ class Note < ActiveRecord::Base
 
   # Provide a validation adding an error to the model's base
   def title_check
-    errors.add(:base, :model_invalid, errors: 'The record has an unacceptable title.') if title == 'n/a'
+    return unless title == 'n/a'
+
+    message = 'The record has an unacceptable title.'
+    errors.add(:base, :model_invalid, errors: message)
   end
 
   def deletable?

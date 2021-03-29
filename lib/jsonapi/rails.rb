@@ -73,7 +73,8 @@ module JSONAPI
 
                 details[attr] << current
               else
-                details[attr] << error.merge(message: resource.messages[attr][index])
+                message = resource.messages[attr][index]
+                details[attr] << error.merge(message: message)
               end
             end
           end
@@ -92,7 +93,11 @@ module JSONAPI
 
         JSONAPI::Rails.serializer_to_json(
           JSONAPI::ActiveModelErrorSerializer.new(
-            errors, params: { model: model, model_serializer: model_serializer, status: options[:status] }
+            errors, params: {
+              model:            model,
+              model_serializer: model_serializer,
+              status:           options[:status]
+            }
           )
         )
       end

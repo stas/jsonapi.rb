@@ -5,8 +5,10 @@ module JSONAPI
   class ActiveModelErrorSerializer < ErrorSerializer
     class << self
       ##
-      # Get the status code to render for the serializer, considering an
-      # eventual status provided through the serializer parameters
+      # Get the status code to render for the serializer
+      #
+      # This considers an optional status provided through the serializer
+      # parameters, as either a symbol or a number.
       #
       # @param params [Hash]
       #     The serializer parameters
@@ -72,7 +74,7 @@ module JSONAPI
       elsif rels.include?(error_key)
         { pointer: "/data/relationships/#{error_key}" }
       elsif error_key == :base
-        { pointer: "/data" }
+        { pointer: '/data' }
       else
         { pointer: nil }
       end
