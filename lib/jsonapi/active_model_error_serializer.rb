@@ -5,8 +5,8 @@ module JSONAPI
   class ActiveModelErrorSerializer < ErrorSerializer
     class << self
       ##
-      # Get the status code to render for the serializer, considering an eventual
-      # status provided through the serializer parameters
+      # Get the status code to render for the serializer, considering an
+      # eventual status provided through the serializer parameters
       #
       # @param params [Hash]
       #     The serializer parameters
