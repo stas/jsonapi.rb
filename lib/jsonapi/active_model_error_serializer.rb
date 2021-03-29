@@ -50,12 +50,12 @@ module JSONAPI
         message = errors_object.generate_message(
           error_key, nil, error_hash[:error]
         )
-      elsif error_hash[:error].present?
+      elsif error_hash[:error].present? && error_hash[:error].is_a?(Symbol)
         message = errors_object.generate_message(
           error_key, error_hash[:error], error_hash
         )
       else
-        message = error_hash[:message]
+        message = error_hash[:message] || error_hash[:error]
       end
 
       errors_object.full_message(error_key, message)
