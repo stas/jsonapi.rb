@@ -85,6 +85,20 @@ RSpec.describe UsersController, type: :request do
         end
       end
 
+      context 'returns filtered users by notes quantity sum' do
+        let(:params) do
+          { filter: {
+            notes_quantity_sum_gteq: 1000
+            }
+          }
+        end
+
+        it do
+          expect(response).to have_http_status(:ok)
+          expect(response_json['data'].size).to eq(0)
+        end
+      end
+
       context 'returns sorted users by notes' do
         let(:params) do
           { sort: '-notes_created_at' }

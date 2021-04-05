@@ -25,6 +25,8 @@ RSpec.configure do |config|
   end
 end
 
+ActiveRecord::Base.logger = Logger.new(STDOUT) if defined?(ActiveRecord::Base)
+
 module RSpecHelpers
   include Dummy.routes.url_helpers
 

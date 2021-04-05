@@ -31,6 +31,14 @@ end
 
 class User < ActiveRecord::Base
   has_many :notes
+
+  scope :with_notes_quantity_sum, -> {
+    select('users.*, sum(notes.quantity) as notes_quantity_sum')
+    .joins(:notes)
+    .group(:id)
+  }
+
+  ransacker(:notes_quantity_sum) { Arel.sql('notes_quantity_sum') }
 end
 
 class Note < ActiveRecord::Base
@@ -51,7 +59,7 @@ class UserSerializer
   include JSONAPI::Serializer
 
   has_many :notes, serializer: CustomNoteSerializer
-  attributes(:last_name, :created_at, :updated_at)
+  attributes(:last_name, :created_at, :updated_at, :notes_quantity_sum)
 
   attribute :first_name do |object, params|
     if params[:first_name_upcase]
@@ -87,7 +95,9 @@ class UsersController < ActionController::Base
     ]
     options = { sort_with_expressions: true }
 
-    jsonapi_filter(User.all, allowed_fields, options) do |filtered|
+    collection = User.with_notes_quantity_sum
+    
+    jsonapi_filter(collection, allowed_fields, options) do |filtered|
       result = filtered.result
 
       if params[:sort].to_s.include?('notes_quantity')
