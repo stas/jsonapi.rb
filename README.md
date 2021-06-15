@@ -314,7 +314,7 @@ If you want to change the default number of items per page or define a custom lo
 ```ruby
   def jsonapi_page_size(pagination_params)
     per_page = pagination_params[:size].to_f.to_i
-    per_page = 30 if per_page > 30
+    per_page = 30 if per_page > 30 || per_page < 1
     per_page
   end
 ```
