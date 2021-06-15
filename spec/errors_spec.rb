@@ -56,13 +56,8 @@ RSpec.describe NotesController, type: :request do
           .to eq(Rack::Utils::HTTP_STATUS_CODES[422])
         expect(response_json['errors'][0]['source'])
           .to eq('pointer' => '/data/relationships/user')
-        if Rails::VERSION::MAJOR >= 6 && Rails::VERSION::MINOR >= 1
-          expect(response_json['errors'][0]['detail'])
-            .to eq('User must exist')
-        else
-          expect(response_json['errors'][0]['detail'])
-            .to eq('User can\'t be blank')
-        end
+        expect(response_json['errors'][0]['detail'])
+          .to eq('User must exist')
       end
 
       context 'required by validations' do
@@ -133,6 +128,27 @@ RSpec.describe NotesController, type: :request do
             .to eq('pointer' => '/data/attributes/title')
         end
       end
+
+      context 'with a validation error on the class' do
+        let(:params) do
+          payload = note_params.dup
+          payload[:data][:attributes][:title] = 'n/a'
+          payload
+        end
+
+        it do
+          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response_json['errors'].size).to eq(1)
+          expect(response_json['errors'][0]['status']).to eq('422')
+          expect(response_json['errors'][0]['code']).to include('invalid')
+          expect(response_json['errors'][0]['title'])
+            .to eq(Rack::Utils::HTTP_STATUS_CODES[422])
+          expect(response_json['errors'][0]['source'])
+              .to eq('pointer' => '/data')
+          expect(response_json['errors'][0]['detail'])
+            .to eq('Validation failed: The record has an unacceptable title.')
+        end
+      end
     end
 
     context 'with a bad note ID' do
@@ -163,6 +179,43 @@ RSpec.describe NotesController, type: :request do
         expect(response_json['errors'][0]['source']).to be_nil
         expect(response_json['errors'][0]['detail']).to be_nil
       end
+    end
+  end
+
+  describe 'DELETE /nodes/:id' do
+    let(:note)    { create_note }
+    let(:note_id) { note.id }
+    let(:user)    { note.user }
+    let(:user_id) { user.id }
+
+    context 'with a random note' do
+      before { delete(note_path(note_id), headers: jsonapi_headers) }
+
+      it { expect(response).to have_http_status(:no_content) }
+    end
+
+    context 'with a lovely note' do
+      let(:errors) do
+        {
+          'errors' => [
+            {
+              'code'   => 'cant_delete_lovely_notes',
+              'detail' => "Can't delete lovely notes",
+              'source' => { 'pointer' => '/data' },
+              'status' => '409',
+              'title'  => 'Conflict'
+            }
+          ]
+        }
+      end
+
+      before do
+        note.update(title: 'Lovely')
+        delete(note_path(note_id), headers: jsonapi_headers)
+      end
+
+      it { expect(response).to have_http_status(:conflict) }
+      it { expect(response_json).to match(errors) }
     end
   end
 end

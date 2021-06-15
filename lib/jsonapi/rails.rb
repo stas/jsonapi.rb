@@ -62,8 +62,22 @@ module JSONAPI
             details[attr] ||= []
             details[attr] << error.detail.merge(message: error.message)
           end
-        elsif resource.respond_to?(:details)
-          details = resource.details
+        elsif resource.respond_to?(:details) && resource.respond_to?(:messages)
+          resource.details.each do |attr, problems|
+            problems.each_with_index do |error, index|
+              details[attr] ||= []
+
+              if error[:error].is_a?(Hash)
+                current = error[:error].dup
+                current[:error] ||= :invalid
+
+                details[attr] << current
+              else
+                message = resource.messages[attr][index]
+                details[attr] << error.merge(message: message)
+              end
+            end
+          end
         else
           details = resource.messages
         end
@@ -79,7 +93,11 @@ module JSONAPI
 
         JSONAPI::Rails.serializer_to_json(
           JSONAPI::ActiveModelErrorSerializer.new(
-            errors, params: { model: model, model_serializer: model_serializer }
+            errors, params: {
+              model:            model,
+              model_serializer: model_serializer,
+              status:           options[:status]
+            }
           )
         )
       end

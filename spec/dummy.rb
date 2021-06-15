@@ -36,7 +36,25 @@ end
 class Note < ActiveRecord::Base
   validates_format_of :title, without: /BAD_TITLE/
   validates_numericality_of :quantity, less_than: 100, if: :quantity?
+  validate :title_check
   belongs_to :user, required: true
+
+  before_destroy :deletable?
+
+  # Provide a validation adding an error to the model's base
+  def title_check
+    return unless title == 'n/a'
+
+    message = 'The record has an unacceptable title.'
+    errors.add(:base, :model_invalid, errors: message)
+  end
+
+  def deletable?
+    return true unless title == 'Lovely'
+
+    errors.add(:base, "Can't delete lovely notes")
+    throw :abort
+  end
 end
 
 class CustomNoteSerializer
@@ -69,7 +87,7 @@ class Dummy < Rails::Application
   routes.draw do
     scope defaults: { format: :jsonapi } do
       resources :users, only: [:index]
-      resources :notes, only: [:update]
+      resources :notes, only: [:update, :destroy]
     end
   end
 end
@@ -133,6 +151,15 @@ class NotesController < ActionController::Base
       note.errors.add(:title, message: 'has typos') if note.errors.key?(:title)
 
       render jsonapi_errors: note.errors, status: :unprocessable_entity
+    end
+  end
+
+  def destroy
+    note = Note.find(params[:id])
+    if note.destroy
+      head :no_content
+    else
+      render jsonapi_errors: note.errors, status: :conflict
     end
   end
 
