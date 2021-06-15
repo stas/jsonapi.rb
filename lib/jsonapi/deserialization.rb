@@ -35,9 +35,11 @@ module JSONAPI
     def jsonapi_deserialize(document, options = {})
       if document.respond_to?(:permit!)
         # Handle Rails params...
-        primary_data = document.dup.require(:data).permit!.as_json
+        primary_data =
+          document.dup.require(:data).permit!.to_h.deep_stringify_keys
       elsif document.is_a?(Hash)
-        primary_data = (document.as_json['data'] || {}).deep_dup
+        primary_data =
+          (document.to_h.deep_stringify_keys['data'] || {}).deep_dup
       else
         return {}
       end

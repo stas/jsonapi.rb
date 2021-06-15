@@ -2,6 +2,7 @@ require 'spec_helper'
 
 RSpec.describe JSONAPI::Deserialization do
   let(:jsonapi_deserialize) { UsersController.new.method(:jsonapi_deserialize) }
+  let(:file_object) { ::File.new('./Gemfile') }
   let(:document) do
     {
       data: {
@@ -9,7 +10,8 @@ RSpec.describe JSONAPI::Deserialization do
         type: 'note',
         attributes: {
           title: 'Title 1',
-          date: '2015-12-20'
+          date: '2015-12-20',
+          file: file_object
         },
         relationships: {
           author: {
@@ -40,7 +42,7 @@ RSpec.describe JSONAPI::Deserialization do
 
   describe '#jsonapi_deserialize' do
     it do
-      expect(jsonapi_deserialize.call(document)).to eq(
+      expect(jsonapi_deserialize.call(document)).to include(
         'id' => 1,
         'date' => '2015-12-20',
         'title' => 'Title 1',
@@ -48,6 +50,18 @@ RSpec.describe JSONAPI::Deserialization do
         'second_author_id' => nil,
         'note_ids' => [3, 4]
       )
+    end
+
+    context 'with file attribute' do
+      it do
+        expect(jsonapi_deserialize.call(document)['file'])
+          .to be_an_instance_of(File)
+      end
+
+      it do
+        expect(jsonapi_deserialize.call(document)['file'])
+          .not_to be_an_instance_of(String)
+      end
     end
 
     context 'with `only`' do
@@ -61,7 +75,7 @@ RSpec.describe JSONAPI::Deserialization do
     context 'with `except`' do
       it do
         expect(
-          jsonapi_deserialize.call(document, except: [:date, :title])
+          jsonapi_deserialize.call(document, except: [:date, :title, :file])
         ).to eq(
           'id' => 1,
           'author_id' => 2,
