@@ -32,7 +32,7 @@ end
 class User < ActiveRecord::Base
   has_many :notes
 
-  scope :created_before, ->(date) { where("created_at < ?", date) }
+  scope :created_before, ->(date) { where('created_at < ?', date) }
 
   def self.ransackable_scopes(_auth_object = nil)
     [:created_before]
