@@ -326,17 +326,42 @@ into a flat dictionary that can be used to update an `ActiveRecord::Base` model.
 Here's an example using the `jsonapi_deserialize` helper:
 
 ```ruby
-class MyController < ActionController::Base
+class ArticleController < ActionController::Base
   include JSONAPI::Deserialization
 
   def update
-    model = MyModel.find(params[:id])
+    article = Article.find(params[:id])
 
-    if model.update(jsonapi_deserialize(params, only: [:attr1, :rel_one]))
-      render jsonapi: model
+    if article.update(jsonapi_deserialize(params, only: [:name, :author, :comments]))
+      render jsonapi: article
     else
-      render jsonapi_errors: model.errors, status: :unprocessable_entity
+      render jsonapi_errors: article.errors, status: :unprocessable_entity
     end
+  end
+end
+
+class ArticleControllerTest < ActionController::TestCase
+  test 'update article' do
+    new_author = authors(:author1)
+    user_comment1 = comments(:comment1)
+    user_comment2 = comments(:comment2)
+    
+    patch :update, params: {
+      data: {
+        attributes: {
+          name: 'New Article Name',
+        },
+        relationships: {
+          "author" => { "data" => { "id" => new_author.id.to_s } },
+          "comments" => {
+            "data" => [
+              { "id" => user_comment1.id.to_s },
+              { "id" => user_comment2.id.to_s }
+            ]
+          }
+        }
+      }
+    }, xhr: true
   end
 end
 ```
