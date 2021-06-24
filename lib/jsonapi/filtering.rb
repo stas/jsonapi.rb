@@ -62,7 +62,7 @@ module JSONAPI
           to_filter = to_filter.split(',')
         end
 
-        if predicates.any? && (field_names - allowed_fields).empty?
+        if (field_names - allowed_fields).empty?
           filtered[requested_field] = to_filter
         end
       end
