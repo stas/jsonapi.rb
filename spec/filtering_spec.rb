@@ -106,14 +106,7 @@ RSpec.describe UsersController, type: :request do
           }
         end
 
-        fit 'ensures ransack scopes are working properly' do
-          ransack = User.ransack({ created_before: '2013-02-01' })
-          expected_sql = 'SELECT "users".* FROM "users" WHERE '\
-                         '(created_at < \'2013-02-01\')'
-          expect(ransack.result.to_sql).to eq(expected_sql)
-        end
-
-        fit 'should return only' do
+        it do
           expect(response).to have_http_status(:ok)
           expect(response_json['data'].size).to eq(1)
           expect(response_json['data'][0]).to have_id(third_user.id.to_s)

@@ -91,7 +91,10 @@ class UsersController < ActionController::Base
       :first_name, :last_name, :created_at,
       :notes_created_at, :notes_quantity, :created_before
     ]
-    options = { sort_with_expressions: true }
+    options = {
+      sort_with_expressions: true,
+      allowed_scopes: User.ransackable_scopes
+    }
 
     jsonapi_filter(User.all, allowed_fields, options) do |filtered|
       result = filtered.result

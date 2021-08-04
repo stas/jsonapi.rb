@@ -255,6 +255,37 @@ $ curl -X GET \
   &sort=-model_attr,relationship_attr
 ```
 
+#### Using scopes
+
+You can use scopes for filtering as well, to enable scopes, use the option
+flags:
+
+```ruby
+options = { allowed_scopes: User.ransackable_scopes }
+jsonapi_filter(User.all, [:created_before], options) do |filtered|
+  render jsonapi: result.group('id').to_a
+end
+```
+
+Assuming your model `User` has the following scope defined:
+
+```ruby
+class User < ActiveRecord::Base
+  scope :created_before, ->(date) { where('created_at < ?', date) }
+
+
+  def self.ransackable_scopes(_auth_object = nil)
+    [:created_before]
+  end
+end
+```
+
+This allows you to run queries like:
+
+```bash
+$ curl -X GET /api/resources?filter[created_before]='2021-01-29'
+```
+
 #### Sorting using expressions
 
 You can use basic aggregations like `min`, `max`, `avg`, `sum` and `count`
