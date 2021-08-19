@@ -16,7 +16,7 @@ module JSONAPI
       if resources.respond_to?(:offset)
         resources = resources.offset(offset).limit(limit)
       else
-        original_size = resources.size
+        original_size = resources.length
         resources = resources[(offset)..(offset + limit - 1)] || []
 
         # Cache the original resources size to be used for pagination meta
@@ -65,11 +65,11 @@ module JSONAPI
       numbers = { current: page }
 
       if resources.respond_to?(:unscope)
-        total = resources.unscope(:limit, :offset, :order).size
+        total = resources.unscope(:limit, :offset, :order).length
       else
         # Try to fetch the cached size first
         total = resources.instance_variable_get(:@original_size)
-        total ||= resources.size
+        total ||= resources.length
       end
 
       last_page = [1, (total.to_f / limit).ceil].max
