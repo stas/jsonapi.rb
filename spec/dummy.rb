@@ -31,6 +31,16 @@ end
 
 class User < ActiveRecord::Base
   has_many :notes
+
+  def self.with_note_counts_attr
+    left_joins(:notes)
+      .select('users.*, COUNT(notes.id) AS note_counts')
+      .group('users.id')
+  end
+
+  def note_counts
+    has_attribute?(:note_counts) ? read_attribute(:note_counts) : nil
+  end
 end
 
 class Note < ActiveRecord::Base
@@ -51,7 +61,7 @@ class UserSerializer
   include JSONAPI::Serializer
 
   has_many :notes, serializer: CustomNoteSerializer
-  attributes(:last_name, :created_at, :updated_at)
+  attributes(:last_name, :created_at, :updated_at, :note_counts)
 
   attribute :first_name do |object, params|
     if params[:first_name_upcase]
@@ -87,7 +97,9 @@ class UsersController < ActionController::Base
     ]
     options = { sort_with_expressions: true }
 
-    jsonapi_filter(User.all, allowed_fields, options) do |filtered|
+    users = User.with_note_counts_attr
+
+    jsonapi_filter(users, allowed_fields, options) do |filtered|
       result = filtered.result
 
       if params[:sort].to_s.include?('notes_quantity')
