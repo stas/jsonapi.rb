@@ -49,8 +49,7 @@ module JSONAPI
         options[opt_name] = Array(opt_value).map(&:to_s) if opt_value
       end
 
-      is_array = primary_data.is_a?(Array)
-      if is_array
+      if primary_data.is_a?(Array)
         primary_data.map do |datum|
           jsonapi_deserialize_single_data_item(datum, options)
         end
