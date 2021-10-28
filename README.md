@@ -347,6 +347,7 @@ The `jsonapi_deserialize` helper accepts the following options:
  * `except`: returns exclusively attributes/relationship which are not in the list
  * `polymorphic`: will add and detect the `_type` attribute and class to the
    defined list of polymorphic relationships
+ * `symbolize_keys`: returns hash with symbolized keys
 
 This functionality requires support for _inflections_. If your project uses
 `active_support` or `rails` you don't need to do anything. Alternatively, we will
