@@ -136,8 +136,15 @@ module JSONAPI
     #
     # @return [Class]
     def self.serializer_class(resource, is_collection)
-      klass = resource.class
-      klass = resource.first.class if is_collection
+      klass = if is_collection
+        if defined?(ActiveRecord::Relation) && resource.respond_to?(:model)
+          resource.model
+        else
+          resource.first.class
+        end
+      else
+        resource.class
+      end
 
       "#{klass.name}Serializer".constantize
     end
