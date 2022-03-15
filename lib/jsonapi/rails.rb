@@ -121,15 +121,13 @@ module JSONAPI
 
     # Checks if an object is a collection
     #
-    # Stolen from [JSONAPI::Serializer], instance method.
+    # Basically forwards it to a [JSONAPI::Serializer] as there's no public API
     #
     # @param resource [Object] to check
     # @param force_is_collection [NilClass] flag to overwrite
     # @return [TrueClass] upon success
     def self.is_collection?(resource, force_is_collection = nil)
-      return force_is_collection unless force_is_collection.nil?
-
-      resource.respond_to?(:size) && !resource.respond_to?(:each_pair)
+      JSONAPI::ErrorSerializer.is_collection?(resource, force_is_collection)
     end
 
     # Resolves resource serializer class
