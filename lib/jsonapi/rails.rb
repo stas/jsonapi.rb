@@ -56,8 +56,8 @@ module JSONAPI
         end
 
         details = {}
-        if ::Rails::VERSION::MAJOR >= 6 && ::Rails::VERSION::MINOR >= 1
-          resource.map do |error|
+        if ::Rails.gem_version >= Gem::Version.new('6.1')
+          resource.each do |error|
             attr = error.attribute
             details[attr] ||= []
             details[attr] << error.detail.merge(message: error.message)
