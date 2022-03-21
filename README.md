@@ -39,7 +39,7 @@ The available features include:
    [sparse fields](https://jsonapi.org/format/#fetching-sparse-fieldsets))
  * [filtering](https://jsonapi.org/format/#fetching-filtering) and
    [sorting](https://jsonapi.org/format/#fetching-sorting) of the data
-   (powered by Ransack)
+   (powered by Ransack, soft-dependency)
  * [pagination](https://jsonapi.org/format/#fetching-pagination) support
 
 ## But how?
@@ -230,6 +230,8 @@ end
 to filter and sort over a collection of records.
 The support is pretty extended and covers also relationships and composite
 matchers.
+
+Please add `ransack` to your `Gemfile` in order to benefit from this functionality!
 
 Here's an example:
 
