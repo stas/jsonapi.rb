@@ -24,8 +24,9 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'rack'
 
   spec.add_development_dependency 'bundler'
-  spec.add_development_dependency 'rails', ENV['RAILS_VERSION']
   spec.add_development_dependency 'ransack'
+  spec.add_development_dependency 'railties', ENV['RAILS_VERSION']
+  spec.add_development_dependency 'activerecord', ENV['RAILS_VERSION']
   spec.add_development_dependency 'sqlite3', ENV['SQLITE3_VERSION']
   spec.add_development_dependency 'ffaker'
   spec.add_development_dependency 'rspec', '~> 3.0'
