@@ -1,5 +1,10 @@
-require 'ransack/predicate'
-require_relative 'patches'
+begin
+  require 'active_record'
+  require 'ransack'
+  require_relative 'patches'
+rescue LoadError
+  warn('Install `ransack` gem before using `JSONAPI::Filtering`!')
+end
 
 # Filtering and sorting support
 module JSONAPI
