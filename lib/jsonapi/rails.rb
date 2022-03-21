@@ -47,7 +47,7 @@ module JSONAPI
         ) unless resource.is_a?(ActiveModel::Errors)
 
         errors = []
-        model = resource.instance_variable_get('@base')
+        model = resource.instance_variable_get(:@base)
 
         if respond_to?(:jsonapi_serializer_class, true)
           model_serializer = jsonapi_serializer_class(model, false)
