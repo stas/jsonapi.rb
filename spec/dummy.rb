@@ -1,8 +1,7 @@
 require 'securerandom'
-require 'active_record'
-require 'action_controller/railtie'
-require 'jsonapi'
+require 'rails/all'
 require 'ransack'
+require 'jsonapi'
 
 Rails.logger = Logger.new(STDOUT)
 Rails.logger.level = ENV['LOG_LEVEL'] || Logger::WARN
