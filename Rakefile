@@ -30,5 +30,5 @@ else
   task(qa: ['qa:docs', 'qa:code'])
 end
 
-RSpec::Core::RakeTask.new(spec: :qa)
-task(default: :spec)
+RSpec::Core::RakeTask.new(:spec)
+task(default: %w[qa spec])
