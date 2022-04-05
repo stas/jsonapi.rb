@@ -25,7 +25,7 @@ RSpec.describe UsersController, type: :request do
         it do
           expect(response).to have_http_status(:ok)
           expect(response_json['data'].size).to eq(users.size)
-          expect(response.media_type).to eq("application/vnd.api+json")
+          expect(response.media_type).to eq('application/vnd.api+json')
 
           response_json['data'].each do |item|
             user = users.detect { |u| u.id == item['id'].to_i }

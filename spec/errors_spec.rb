@@ -31,7 +31,7 @@ RSpec.describe NotesController, type: :request do
 
       it do
         expect(response).to have_http_status(:unprocessable_entity)
-        expect(response.media_type).to eq("application/vnd.api+json")
+        expect(response.media_type).to eq('application/vnd.api+json')
         expect(response_json['errors'].size).to eq(1)
         expect(response_json['errors'][0]['status']).to eq('422')
         expect(response_json['errors'][0]['title'])
