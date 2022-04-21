@@ -100,7 +100,7 @@ module JSONAPI
         # If it's an empty collection, return it directly.
         many = JSONAPI::Rails.is_collection?(resource, options[:is_collection])
         if many && !resource.any?
-          return options.slice(:meta, :links).merge(data: []).to_json
+          return options.slice(:meta, :links).compact.merge(data: []).to_json
         end
 
         JSONAPI_METHODS_MAPPING.to_a[2..-1].each do |opt, method_name|
