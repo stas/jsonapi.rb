@@ -20,6 +20,8 @@ Gem::Specification.new do |spec|
   spec.files        += %w(LICENSE.txt README.md)
   spec.require_paths = ['lib']
 
+  spec.post_install_message = 'Install `ransack` gem before using `JSONAPI::Filtering`!'
+
   spec.add_dependency 'jsonapi-serializer'
   spec.add_dependency 'rack'
 

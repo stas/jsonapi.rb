@@ -1,10 +1,4 @@
-begin
-  require 'active_record'
-  require 'ransack'
-  require_relative 'patches'
-rescue LoadError
-  warn('Install `ransack` gem before using `JSONAPI::Filtering`!')
-end
+require 'active_record'
 
 # Filtering and sorting support
 module JSONAPI
@@ -14,6 +8,10 @@ module JSONAPI
     # @param requested_field [String] the field to parse
     # @return [Array] with the fields and the predicate
     def self.extract_attributes_and_predicates(requested_field)
+      # lazy load ransack to be optional if not used
+      require 'ransack'
+      require_relative 'patches'
+
       predicates = []
       field_name = requested_field.to_s.dup
 
