@@ -233,6 +233,12 @@ class MyController < ActionController::Base
 end
 ```
 
+This allows you to run queries like:
+
+```bash
+$ curl -X GET /api/resources?fields[model]=model_attr,relationship
+```
+
 ### Filtering and sorting
 
 `JSONAPI::Filtering` uses the power of
