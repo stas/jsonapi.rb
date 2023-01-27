@@ -96,6 +96,22 @@ RSpec.describe UsersController, type: :request do
           expect(response_json['data'][0]).to have_id(second_user.id.to_s)
         end
       end
+
+      context 'returns users filtered by scope' do
+        let(:params) do
+          third_user.update(created_at: '2013-01-01')
+
+          {
+            filter: { created_before: '2013-02-01' }
+          }
+        end
+
+        it do
+          expect(response).to have_http_status(:ok)
+          expect(response_json['data'].size).to eq(1)
+          expect(response_json['data'][0]).to have_id(third_user.id.to_s)
+        end
+      end
     end
   end
 end
