@@ -10,7 +10,6 @@ module JSONAPI
     # Object/Hash attribute helpers.
     [:status, :source, :title, :detail, :code].each do |attr_name|
       attribute attr_name do |object|
-          binding.pry
         object.try(attr_name) || object.try(:fetch, attr_name, nil)
       end
     end
