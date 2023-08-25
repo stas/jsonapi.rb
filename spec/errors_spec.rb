@@ -1,6 +1,16 @@
 require 'spec_helper'
 
 RSpec.describe NotesController, type: :request do
+  describe 'GET /basic' do
+    before do
+      get(basics_path)
+    end
+
+    it do
+      expect(response_json['errors'].first.keys).to contain_exactly('status', 'source', 'title', 'detail', 'code')
+    end
+  end
+
   describe 'PUT /notes/:id' do
     let(:note) { create_note }
     let(:note_id) { note.id }

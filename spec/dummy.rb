@@ -69,6 +69,7 @@ class Dummy < Rails::Application
     scope defaults: { format: :jsonapi } do
       resources :users, only: [:index]
       resources :notes, only: [:update]
+      resources :basics, only: [:index]
     end
   end
 end
@@ -158,5 +159,11 @@ class NotesController < ActionController::Base
 
   def jsonapi_meta(resources)
     { single: true }
+  end
+end
+
+class BasicsController < ActionController::Base
+  def index
+    render jsonapi_errors: { status: 422, detail: "detail", title: 'title', source: "source", code: "code" }, status: :unprocessable_entity
   end
 end
