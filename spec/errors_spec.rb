@@ -32,11 +32,16 @@ RSpec.describe NotesController, type: :request do
       it do
         expect(response).to have_http_status(:unprocessable_entity)
         expect(response_json['errors'].size).to eq(1)
+
+        expect(response_json['errors'].first.keys)
+          .to contain_exactly('status', 'source', 'title', 'detail', 'code')
+
         expect(response_json['errors'][0]['status']).to eq('422')
         expect(response_json['errors'][0]['title'])
           .to eq(Rack::Utils::HTTP_STATUS_CODES[422])
         expect(response_json['errors'][0]['source']).to eq('pointer' => '')
         expect(response_json['errors'][0]['detail']).to be_nil
+        expect(response_json['errors'][0]['code']).to be_nil
       end
     end
 
