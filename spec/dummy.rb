@@ -113,6 +113,7 @@ class UsersController < ActionController::Base
       result = result.to_a if params[:as_list]
 
       jsonapi_paginate(result) do |paginated|
+        paginated = paginated.to_a if params[:decorate_after_pagination]
         render jsonapi: paginated
       end
     end
