@@ -49,9 +49,28 @@ module JSONAPI
         options[opt_name] = Array(opt_value).map(&:to_s) if opt_value
       end
 
-      relationships = primary_data['relationships'] || {}
-      parsed = primary_data['attributes'] || {}
-      parsed['id'] = primary_data['id'] if primary_data['id']
+      if primary_data.is_a?(Array)
+        primary_data.map do |datum|
+          jsonapi_deserialize_data_element(datum, options)
+        end
+      else
+        jsonapi_deserialize_data_element(primary_data, options)
+      end
+    end
+
+    # Returns a transformed dictionary following [ActiveRecord::Base] specs for
+    # a single data element
+    #
+    # @param [Hash] data_element
+    # @param [Hash] options
+    #   only: Array of symbols of whitelisted fields.
+    #   except: Array of symbols of blacklisted fields.
+    #   polymorphic: Array of symbols of polymorphic fields.
+    # @return [Hash]
+    def jsonapi_deserialize_data_element(data_element, options = {})
+      relationships = data_element['relationships'] || {}
+      parsed = data_element['attributes'] || {}
+      parsed['id'] = data_element['id'] if data_element['id']
 
       # Remove unwanted items from a dictionary.
       if options['only']
