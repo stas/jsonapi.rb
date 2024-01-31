@@ -102,6 +102,28 @@ RSpec.describe NotesController, type: :request do
         end
       end
 
+      context "validations with non-interpolated messages" do
+        let(:params) do
+          payload = note_params.dup
+          payload[:data][:attributes][:title] = 'SLURS ARE GREAT'
+          payload
+        end
+
+        it do
+          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response_json['errors'].size).to eq(1)
+          expect(response_json['errors']).to contain_exactly(
+            {
+              'status' => '422',
+              'source' => { 'pointer' => '' },
+              'title' => 'Unprocessable Entity',
+              'detail' => 'Title has slurs',
+              'code' => 'title_has_slurs'
+            }
+          )
+        end
+      end
+
       context 'as a param attribute' do
         let(:params) do
           payload = note_params.dup
