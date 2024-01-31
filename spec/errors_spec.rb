@@ -32,16 +32,15 @@ RSpec.describe NotesController, type: :request do
       it do
         expect(response).to have_http_status(:unprocessable_entity)
         expect(response_json['errors'].size).to eq(1)
-
-        expect(response_json['errors'].first.keys)
-          .to contain_exactly('status', 'source', 'title', 'detail', 'code')
-
-        expect(response_json['errors'][0]['status']).to eq('422')
-        expect(response_json['errors'][0]['title'])
-          .to eq(Rack::Utils::HTTP_STATUS_CODES[422])
-        expect(response_json['errors'][0]['source']).to eq('pointer' => '')
-        expect(response_json['errors'][0]['detail']).to be_nil
-        expect(response_json['errors'][0]['code']).to be_nil
+        expect(response_json['errors']).to contain_exactly(
+          {
+            'status' => '422',
+            'source' => { 'pointer' => '' },
+            'title' => 'Unprocessable Entity',
+            'detail' => nil,
+            'code' => nil
+          }
+        )
       end
     end
 
@@ -55,19 +54,15 @@ RSpec.describe NotesController, type: :request do
       it do
         expect(response).to have_http_status(:unprocessable_entity)
         expect(response_json['errors'].size).to eq(1)
-        expect(response_json['errors'][0]['status']).to eq('422')
-        expect(response_json['errors'][0]['code']).to include('blank')
-        expect(response_json['errors'][0]['title'])
-          .to eq(Rack::Utils::HTTP_STATUS_CODES[422])
-        expect(response_json['errors'][0]['source'])
-          .to eq('pointer' => '/data/relationships/user')
-        if Rails.gem_version >= Gem::Version.new('6.1')
-          expect(response_json['errors'][0]['detail'])
-            .to eq('User must exist')
-        else
-          expect(response_json['errors'][0]['detail'])
-            .to eq('User can\'t be blank')
-        end
+        expect(response_json['errors']).to contain_exactly(
+          {
+            'status' => '422',
+            'source' => { 'pointer' => '/data/relationships/user' },
+            'title' => 'Unprocessable Entity',
+            'detail' => Rails.gem_version >= Gem::Version.new('6.1') ? 'User must exist' : 'User can\'t be blank',
+            'code' => 'blank'
+          }
+        )
       end
 
       context 'required by validations' do
@@ -81,45 +76,29 @@ RSpec.describe NotesController, type: :request do
         it do
           expect(response).to have_http_status(:unprocessable_entity)
           expect(response_json['errors'].size).to eq(3)
-          expect(response_json['errors'][0]['status']).to eq('422')
-          expect(response_json['errors'][0]['code']).to include('invalid')
-          expect(response_json['errors'][0]['title'])
-            .to eq(Rack::Utils::HTTP_STATUS_CODES[422])
-          expect(response_json['errors'][0]['source'])
-              .to eq('pointer' => '/data/attributes/title')
-          expect(response_json['errors'][0]['detail'])
-            .to eq('Title is invalid')
-
-          expect(response_json['errors'][1]['status']).to eq('422')
-
-          if Rails::VERSION::MAJOR >= 5
-            expect(response_json['errors'][1]['code']).to eq('invalid')
-          else
-            expect(response_json['errors'][1]['code']).to eq('has_typos')
-          end
-
-          expect(response_json['errors'][1]['title'])
-            .to eq(Rack::Utils::HTTP_STATUS_CODES[422])
-          expect(response_json['errors'][1]['source'])
-            .to eq('pointer' => '/data/attributes/title')
-          expect(response_json['errors'][1]['detail'])
-            .to eq('Title has typos')
-
-          expect(response_json['errors'][2]['status']).to eq('422')
-
-          if Rails::VERSION::MAJOR >= 5
-            expect(response_json['errors'][2]['code']).to eq('less_than')
-          else
-            expect(response_json['errors'][2]['code'])
-              .to eq('must_be_less_than_100')
-          end
-
-          expect(response_json['errors'][2]['title'])
-            .to eq(Rack::Utils::HTTP_STATUS_CODES[422])
-          expect(response_json['errors'][2]['source'])
-            .to eq('pointer' => '/data/attributes/quantity')
-          expect(response_json['errors'][2]['detail'])
-            .to eq('Quantity must be less than 100')
+          expect(response_json['errors']).to contain_exactly(
+            {
+              'status' => '422',
+              'source' => { 'pointer' => '/data/attributes/title' },
+              'title' => 'Unprocessable Entity',
+              'detail' => 'Title is invalid',
+              'code' => 'invalid'
+            },
+            {
+              'status' => '422',
+              'source' => { 'pointer' => '/data/attributes/title' },
+              'title' => 'Unprocessable Entity',
+              'detail' => 'Title has typos',
+              'code' => 'invalid'
+            },
+            {
+              'status' => '422',
+              'source' => { 'pointer' => '/data/attributes/quantity' },
+              'title' => 'Unprocessable Entity',
+              'detail' => 'Quantity must be less than 100',
+              'code' => 'less_than'
+            }
+          )
         end
       end
 
@@ -134,8 +113,15 @@ RSpec.describe NotesController, type: :request do
 
         it do
           expect(response).to have_http_status(:unprocessable_entity)
-          expect(response_json['errors'][0]['source'])
-            .to eq('pointer' => '/data/attributes/title')
+          expect(response_json['errors']).to contain_exactly(
+            {
+              'status' => '422',
+              'source' => { 'pointer' => '/data/attributes/title' },
+              'title' => 'Unprocessable Entity',
+              'detail' => nil,
+              'code' => nil
+            }
+          )
         end
       end
     end
@@ -147,11 +133,15 @@ RSpec.describe NotesController, type: :request do
       it do
         expect(response).to have_http_status(:not_found)
         expect(response_json['errors'].size).to eq(1)
-        expect(response_json['errors'][0]['status']).to eq('404')
-        expect(response_json['errors'][0]['title'])
-          .to eq(Rack::Utils::HTTP_STATUS_CODES[404])
-        expect(response_json['errors'][0]['source']).to be_nil
-        expect(response_json['errors'][0]['detail']).to be_nil
+        expect(response_json['errors']).to contain_exactly(
+          {
+            'status' => '404',
+            'source' => nil,
+            'title' => 'Not Found',
+            'detail' => nil,
+            'code' => nil
+          }
+        )
       end
     end
 
@@ -162,11 +152,15 @@ RSpec.describe NotesController, type: :request do
       it do
         expect(response).to have_http_status(:internal_server_error)
         expect(response_json['errors'].size).to eq(1)
-        expect(response_json['errors'][0]['status']).to eq('500')
-        expect(response_json['errors'][0]['title'])
-          .to eq(Rack::Utils::HTTP_STATUS_CODES[500])
-        expect(response_json['errors'][0]['source']).to be_nil
-        expect(response_json['errors'][0]['detail']).to be_nil
+        expect(response_json['errors']).to contain_exactly(
+          {
+            'status' => '500',
+            'source' => nil,
+            'title' => 'Internal Server Error',
+            'detail' => nil,
+            'code' => nil
+          }
+        )
       end
     end
   end
