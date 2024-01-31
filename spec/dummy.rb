@@ -55,7 +55,6 @@ class Note < ActiveRecord::Base
   end
 
   private
-
   def title_cannot_contain_slurs
     errors.add(:base, 'Title has slurs') if title.to_s.include?('SLURS')
   end

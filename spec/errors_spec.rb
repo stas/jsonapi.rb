@@ -54,12 +54,17 @@ RSpec.describe NotesController, type: :request do
       it do
         expect(response).to have_http_status(:unprocessable_entity)
         expect(response_json['errors'].size).to eq(1)
+        expected_detail = if Rails.gem_version >= Gem::Version.new('6.1')
+          'User must exist'
+        else
+          'User can\'t be blank'
+        end
         expect(response_json['errors']).to contain_exactly(
           {
             'status' => '422',
             'source' => { 'pointer' => '/data/relationships/user' },
             'title' => 'Unprocessable Entity',
-            'detail' => Rails.gem_version >= Gem::Version.new('6.1') ? 'User must exist' : 'User can\'t be blank',
+            'detail' => expected_detail,
             'code' => 'blank'
           }
         )
@@ -102,7 +107,7 @@ RSpec.describe NotesController, type: :request do
         end
       end
 
-      context "validations with non-interpolated messages" do
+      context 'validations with non-interpolated messages' do
         let(:params) do
           payload = note_params.dup
           payload[:data][:attributes][:title] = 'SLURS ARE GREAT'
