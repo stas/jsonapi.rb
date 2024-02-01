@@ -41,6 +41,7 @@ class User < ActiveRecord::Base
 end
 
 class Note < ActiveRecord::Base
+  validate :title_cannot_contain_slurs
   validates_format_of :title, without: /BAD_TITLE/
   validates_numericality_of :quantity, less_than: 100, if: :quantity?
   belongs_to :user, required: true
@@ -51,6 +52,11 @@ class Note < ActiveRecord::Base
 
   def self.ransackable_attributes(auth_object = nil)
     %w(created_at id quantity title updated_at user_id)
+  end
+
+  private
+  def title_cannot_contain_slurs
+    errors.add(:base, 'Title has slurs') if title.to_s.include?('SLURS')
   end
 end
 
