@@ -282,7 +282,7 @@ grouping. To enable expressions along with filters, use the option flags:
 ```ruby
 options = { sort_with_expressions: true }
 jsonapi_filter(User.all, allowed_fields, options) do |filtered|
-  render jsonapi: result.group('id').to_a
+  render jsonapi: filtered.result.group('id').to_a
 end
 ```
 
