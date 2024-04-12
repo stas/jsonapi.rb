@@ -22,6 +22,30 @@ RSpec.describe UsersController, type: :request do
         expect(predicates[1].name).to eq('eq')
       end
     end
+
+    context 'with an invalidate predicate' do
+      context 'with default configuration' do
+        it 'does not return any predicates' do
+          attributes, predicates = JSONAPI::Filtering
+            .extract_attributes_and_predicates('attr1_eqx')
+          expect(attributes).to eq(['attr1_eqx'])
+          expect(predicates.size).to eq(0)
+        end
+      end
+      context 'with ignore_unknown_conditions as false' do
+        before do
+          Ransack.configure { |c| c.ignore_unknown_conditions = false }
+        end
+        after do
+          Ransack.configure { |c| c.ignore_unknown_conditions = true }
+        end
+        it 'raises an error' do
+          expect do
+            JSONAPI::Filtering.extract_attributes_and_predicates('attr1_eqx')
+          end.to raise_error ArgumentError
+        end
+      end
+    end
   end
 
   describe 'GET /users' do
