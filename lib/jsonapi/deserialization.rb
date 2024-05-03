@@ -62,7 +62,7 @@ module JSONAPI
 
       relationships.map do |assoc_name, assoc_data|
         assoc_data = (assoc_data || {})['data'] || {}
-        rel_name = jsonapi_inflector.singularize(assoc_name)
+        rel_name = jsonapi_inflector.singularize(assoc_name).underscore
 
         if assoc_data.is_a?(Array)
           parsed["#{rel_name}_ids"] = assoc_data.filter_map { |ri| ri['id'] }
