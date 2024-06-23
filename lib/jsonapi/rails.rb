@@ -46,7 +46,6 @@ module JSONAPI
           JSONAPI::ErrorSerializer.new(resource, options)
         ) unless resource.is_a?(ActiveModel::Errors)
 
-        errors = []
         model = resource.instance_variable_get(:@base)
 
         if respond_to?(:jsonapi_serializer_class, true)
@@ -55,31 +54,12 @@ module JSONAPI
           model_serializer = JSONAPI::Rails.serializer_class(model, false)
         end
 
-        details = {}
-        if ::Rails.gem_version >= Gem::Version.new('6.1')
-          resource.each do |error|
-            attr = error.attribute
-            details[attr] ||= []
-            details[attr] << error.detail.merge(message: error.message)
-          end
-        elsif resource.respond_to?(:details)
-          details = resource.details
-        else
-          details = resource.messages
-        end
-
-        details.each do |error_key, error_hashes|
-          error_hashes.each do |error_hash|
-            # Rails 4 provides just the message.
-            error_hash = { message: error_hash } unless error_hash.is_a?(Hash)
-
-            errors << [ error_key, error_hash ]
-          end
-        end
-
         JSONAPI::Rails.serializer_to_json(
           JSONAPI::ActiveModelErrorSerializer.new(
-            errors, params: { model: model, model_serializer: model_serializer }
+            resource.errors, params: {
+              model: model,
+              model_serializer: model_serializer
+            }
           )
         )
       end
