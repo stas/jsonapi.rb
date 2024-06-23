@@ -1,6 +1,5 @@
 begin
-  require 'active_record'
-  require 'ransack'
+  require 'ransack/predicate'
   require_relative 'patches'
 rescue LoadError
 end
