@@ -31,7 +31,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'ransack'
   spec.add_development_dependency 'railties', ENV['RAILS_VERSION']
   spec.add_development_dependency 'activerecord', ENV['RAILS_VERSION']
-  spec.add_development_dependency 'sqlite3', ENV['SQLITE3_VERSION']
+  spec.add_development_dependency 'sqlite3', '~> 1.7'
   spec.add_development_dependency 'ffaker'
   spec.add_development_dependency 'rspec', '~> 3.0'
   spec.add_development_dependency 'rspec-rails'
