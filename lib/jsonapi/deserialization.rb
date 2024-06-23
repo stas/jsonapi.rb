@@ -44,7 +44,7 @@ module JSONAPI
 
       # Transform keys and any option values.
       options = options.as_json
-      ['only', 'except', 'polymorphic'].each do |opt_name|
+      ['only', 'except', 'polymorphic', 'symbolize_keys'].each do |opt_name|
         opt_value = options[opt_name]
         options[opt_name] = Array(opt_value).map(&:to_s) if opt_value
       end
@@ -77,7 +77,11 @@ module JSONAPI
         end
       end
 
-      parsed
+      if options['symbolize_keys']
+        parsed.symbolize_keys
+      else
+        parsed
+      end
     end
   end
 end
