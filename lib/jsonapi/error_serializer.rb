@@ -8,7 +8,7 @@ module JSONAPI
     set_type :error
 
     # Object/Hash attribute helpers.
-    [:status, :source, :title, :detail, :code].each do |attr_name|
+    [:status, :source, :title, :detail, :code, :links].each do |attr_name|
       attribute attr_name do |object|
         object.try(attr_name) || object.try(:fetch, attr_name, nil)
       end

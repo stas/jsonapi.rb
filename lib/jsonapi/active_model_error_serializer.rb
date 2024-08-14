@@ -15,6 +15,10 @@ module JSONAPI
       object.type.to_s.delete("''").parameterize.tr('-', '_')
     end
 
+    attribute :links do
+      { "service-doc": 'https://example.com/docs' }
+    end
+
     attribute :detail do |object, _params|
       object.full_message
     end

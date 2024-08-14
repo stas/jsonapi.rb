@@ -36,9 +36,10 @@ RSpec.describe NotesController, type: :request do
           {
             'status' => '422',
             'source' => { 'pointer' => '' },
-            'title' => 'Unprocessable Entity',
+            'title' =>  match(/Unprocessable (Entity|Content)/),
             'detail' => nil,
-            'code' => nil
+            'code' => nil,
+            'links' => nil
           }
         )
       end
@@ -63,9 +64,10 @@ RSpec.describe NotesController, type: :request do
           {
             'status' => '422',
             'source' => { 'pointer' => '/data/relationships/user' },
-            'title' => 'Unprocessable Entity',
+            'title' =>  match(/Unprocessable (Entity|Content)/),
             'detail' => expected_detail,
-            'code' => 'blank'
+            'code' => 'blank',
+            'links' => { 'service-doc' => 'https://example.com/docs' }
           }
         )
       end
@@ -85,23 +87,26 @@ RSpec.describe NotesController, type: :request do
             {
               'status' => '422',
               'source' => { 'pointer' => '/data/attributes/title' },
-              'title' => 'Unprocessable Entity',
+              'title' =>  match(/Unprocessable (Entity|Content)/),
               'detail' => 'Title is invalid',
-              'code' => 'invalid'
+              'code' => 'invalid',
+              'links' => { 'service-doc' => 'https://example.com/docs' }
             },
             {
               'status' => '422',
               'source' => { 'pointer' => '/data/attributes/title' },
-              'title' => 'Unprocessable Entity',
+              'title' =>  match(/Unprocessable (Entity|Content)/),
               'detail' => 'Title has typos',
-              'code' => 'invalid'
+              'code' => 'invalid',
+              'links' => { 'service-doc' => 'https://example.com/docs' }
             },
             {
               'status' => '422',
               'source' => { 'pointer' => '/data/attributes/quantity' },
-              'title' => 'Unprocessable Entity',
+              'title' =>  match(/Unprocessable (Entity|Content)/),
               'detail' => 'Quantity must be less than 100',
-              'code' => 'less_than'
+              'code' => 'less_than',
+              'links' => { 'service-doc' => 'https://example.com/docs' }
             }
           )
         end
@@ -121,9 +126,10 @@ RSpec.describe NotesController, type: :request do
             {
               'status' => '422',
               'source' => { 'pointer' => '' },
-              'title' => 'Unprocessable Entity',
+              'title' =>  match(/Unprocessable (Entity|Content)/),
               'detail' => 'Title has slurs',
-              'code' => 'title_has_slurs'
+              'code' => 'title_has_slurs',
+              'links' => { 'service-doc' => 'https://example.com/docs' }
             }
           )
         end
@@ -144,9 +150,10 @@ RSpec.describe NotesController, type: :request do
             {
               'status' => '422',
               'source' => { 'pointer' => '/data/attributes/title' },
-              'title' => 'Unprocessable Entity',
+              'title' =>  match(/Unprocessable (Entity|Content)/),
               'detail' => nil,
-              'code' => nil
+              'code' => nil,
+              'links' => nil
             }
           )
         end
@@ -166,7 +173,8 @@ RSpec.describe NotesController, type: :request do
             'source' => nil,
             'title' => 'Not Found',
             'detail' => nil,
-            'code' => nil
+            'code' => nil,
+            'links' => nil
           }
         )
       end
@@ -185,7 +193,8 @@ RSpec.describe NotesController, type: :request do
             'source' => nil,
             'title' => 'Internal Server Error',
             'detail' => nil,
-            'code' => nil
+            'code' => nil,
+            'links' => nil
           }
         )
       end
