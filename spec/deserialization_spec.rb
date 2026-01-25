@@ -83,5 +83,16 @@ RSpec.describe JSONAPI::Deserialization do
         )
       end
     end
+
+
+    context 'with `symbolize_keys`' do
+      it do
+        expect(
+          jsonapi_deserialize.call(
+            document, symbolize_keys: true
+          )
+        ).to match(jsonapi_deserialize.call(document).symbolize_keys)
+      end
+    end
   end
 end
