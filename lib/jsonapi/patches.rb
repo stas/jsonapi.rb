@@ -36,7 +36,6 @@ end
 Ransack::Visitor.class_eval do
   alias_method :original_visit_Ransack_Nodes_Sort, :visit_Ransack_Nodes_Sort
 
-  private
   # Original method assumes sorting is done only by attributes
   def visit_Ransack_Nodes_Sort(node)
     # Try the default sorting visitor method...
